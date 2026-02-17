@@ -1,7 +1,11 @@
 Database Setup Guide
 
 # Install Dependencies:
-1. Install PgAdmin4
+1. Install PostgreSQL
+**NOTE: YOU WILL NEED TO INSTALL THESE TWO. YOU WILL NOT BE ABLE TO USE DATABASE IN THIS PROJECT WITHOUT THESE 2 DOWNLOADS**
+    - Windows: https://www.enterprisedb.com/postgresql-tutorial-resources-training-1?uuid=69f95902-b451-4735-b7e4-1b62209d4dfd&campaignId=postgres_rc_17
+    - macOS: https://www.enterprisedb.com/postgresql-tutorial-resources-training-1?uuid=fd844639-3f71-463a-a2e7-9dad833c9411&campaignId=postgres_rc_17
+2. Install PgAdmin4
     - Windows: https://www.pgadmin.org/download/pgadmin-4-windows/
     - macOS: https://www.pgadmin.org/download/pgadmin-4-macos/
 
