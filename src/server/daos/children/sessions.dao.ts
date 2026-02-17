@@ -2,14 +2,14 @@ import type { Knex } from 'knex';
 import type { Session } from '../../database/types/tables';
 import type { SessionId, UserId } from '../../database/types/ids';
 import { BaseDAO } from '../base/base.dao';
-import { LOOKUP_TABLES } from '../../database/config/table-names';
+import { LINK_TABLES } from '../../database/config/table-names';
 import type { QueryOptions } from '../base/types';
 
 export class SessionsDAO extends BaseDAO<Session, SessionId> {
   constructor(db: Knex) {
     super(
       {
-        tableName: LOOKUP_TABLES.ROLES,
+        tableName: LINK_TABLES.SESSIONS,
         primaryKey: 'id',
       },
       db
