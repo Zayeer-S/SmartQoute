@@ -1,19 +1,13 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./CreateTicketPage.css";
 import "./CustomerPage.css";
 
 type MenuKey = "Dashboard" | "My Tickets" | "Quotes" | "History" | "Profile";
 
-// Matches ERD lookup tables: ticket_types, ticket_severities, business_impacts,
-// ticket_statuses, ticket_priorities, sla_policies, users/org members etc.
 type LookupOption = { id: number; label: string };
 
-// ---- ERD-aligned payload shape (client -> server) ----
-// NOTE: ticket_number, created_at, updated_at are NOT NULL in ERD,
-// but best practice is the BACKEND generates them.
 type CreateTicketPayload = {
-  // NOT NULL (ERD)
   creator_user_id: number;
   organization_id: number;
   title: string;
@@ -23,24 +17,15 @@ type CreateTicketPayload = {
   business_impact_id: number;
   ticket_status_id: number;
   ticket_priority_id: number;
-  deadline: string; // timestamp NOT NULL (send ISO)
+  deadline: string;
   users_impacted: number;
   is_deleted: boolean;
 
-  // NULLABLE (ERD)
   assigned_to_user_id: number | null;
   resolved_by_user_id: number | null;
   sla_policy_id: number | null;
-
-  // These exist in ERD as nullable; type varies by implementation.
-  // Keep null unless your backend expects timestamps/ints.
   sla_response_due_at: string | null;
   sla_resolution_due_at: string | null;
-
-  // NOT NULL (ERD) but recommended server-side generation:
-  // ticket_number?: string;
-  // created_at?: string;
-  // updated_at?: string;
 };
 
 type TicketFormState = {
@@ -52,16 +37,13 @@ type TicketFormState = {
   ticket_priority_id: number;
   ticket_status_id: number;
 
-  deadline_date: string; // "YYYY-MM-DD" from <input type="date" />
+  deadline_date: string; // "YYYY-MM-DD"
   users_impacted: number;
 
-  // Optional fields from ERD
   assigned_to_user_id: number | "unassigned";
   sla_policy_id: number | "none";
 };
 
-// ---- Example lookup lists (IDs MUST match your DB tables) ----
-// Replace these IDs with real DB IDs or load them from backend.
 const TICKET_TYPES: LookupOption[] = [
   { id: 1, label: "Support - Technical assistance or help" },
   { id: 2, label: "Incident - Service outage or disruption" },
@@ -98,21 +80,106 @@ const STATUSES: LookupOption[] = [
   { id: 5, label: "Closed" },
 ];
 
-// Optional ERD table: sla_policies
 const SLA_POLICIES: LookupOption[] = [
   { id: 1, label: "Standard SLA" },
   { id: 2, label: "Premium SLA" },
 ];
 
-// Optional ERD user list for assignee (organization members)
 const ASSIGNEES: LookupOption[] = [
   { id: 201, label: "Support Agent 1" },
   { id: 202, label: "Support Agent 2" },
   { id: 203, label: "Support Agent 3" },
 ];
 
-// Convert "YYYY-MM-DD" to ISO timestamp.
-// Using end-of-day reduces “deadline accidentally starts at midnight” confusion.
+// Same icons as CustomerPage
+const Icon = {
+  Home: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10.5z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
+  Ticket: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4V7z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M9 9h6M9 12h6M9 15h6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  ),
+  Pound: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M14 4a4 4 0 0 0-4 4v2h5a1 1 0 1 1 0 2h-5v2c0 1.2-.3 2.3-1 3h8a1 1 0 1 1 0 2H7a1 1 0 0 1-.7-1.7c1.2-1.2 1.7-2.4 1.7-4.3v-1H7a1 1 0 1 1 0-2h1V8a6 6 0 0 1 6-6h2a1 1 0 1 1 0 2h-2z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
+  Doc: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M7 3h10l4 4v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M17 3v5h5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M8 12h8M8 16h8"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  ),
+  User: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      <path
+        d="M4 21a8 8 0 0 1 16 0"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  ),
+} as const;
+
+const CUSTOMER = { name: "Guest", email: "guest@smartquote.com" } as const;
+
 function dateToISOEndOfDay(dateStr: string): string {
   if (!dateStr) return "";
   const [yyyy, mm, dd] = dateStr.split("-").map(Number);
@@ -126,14 +193,42 @@ const CreateTicketPage: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState<MenuKey>("My Tickets");
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  // In a real app, get these from auth/session (JWT, /me endpoint, etc.)
-  // ERD requires creator_user_id and organization_id (NOT NULL).
+  // Sidebar dropdown (same behavior as CustomerPage)
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const onMouseDown = (e: MouseEvent) => {
+      const root = profileRef.current;
+      if (!root) return;
+      if (!root.contains(e.target as Node)) setProfileOpen(false);
+    };
+
+    document.addEventListener("mousedown", onMouseDown);
+    return () => document.removeEventListener("mousedown", onMouseDown);
+  }, []);
+
+  const toggleSidebar = useCallback(() => {
+    setIsCollapsed((v) => !v);
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setProfileOpen(false);
+    navigate("/login");
+  }, [navigate]);
+
+  const handleViewUserInfo = useCallback(() => {
+    setProfileOpen(false);
+    alert("View User Information (placeholder)");
+  }, []);
+
+  // Auth/session placeholders (used for payload requirements)
   const authContext = useMemo(
     () => ({
       userId: 123,
       organizationId: 456,
-      name: "Guest",
-      email: "guest@giacom",
     }),
     []
   );
@@ -142,19 +237,15 @@ const CreateTicketPage: React.FC = () => {
     ticket_type_id: TICKET_TYPES[0]?.id ?? 1,
     title: "",
     description: "",
-    ticket_severity_id: SEVERITIES[1]?.id ?? 2, // default medium
-    business_impact_id: BUSINESS_IMPACTS[1]?.id ?? 2, // default moderate
-    ticket_priority_id: PRIORITIES[1]?.id ?? 2, // default medium
-    ticket_status_id: STATUSES[0]?.id ?? 1, // default New
+    ticket_severity_id: SEVERITIES[1]?.id ?? 2,
+    business_impact_id: BUSINESS_IMPACTS[1]?.id ?? 2,
+    ticket_priority_id: PRIORITIES[1]?.id ?? 2,
+    ticket_status_id: STATUSES[0]?.id ?? 1,
     deadline_date: "",
     users_impacted: 1,
-
-    // Optional fields:
     assigned_to_user_id: "unassigned",
     sla_policy_id: "none",
   });
-
-  const descriptionCount = form.description.length;
 
   const setField = <K extends keyof TicketFormState>(
     key: K,
@@ -164,7 +255,6 @@ const CreateTicketPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate required ERD fields that the UI supplies
     if (!authContext.userId) return alert("Missing creator_user_id (not logged in).");
     if (!authContext.organizationId) return alert("Missing organization_id.");
     if (!form.title.trim()) return alert("Title is required.");
@@ -174,27 +264,19 @@ const CreateTicketPage: React.FC = () => {
       return alert("Users impacted must be 1 or more.");
     }
 
-    // ERD-aligned payload
     const payload: CreateTicketPayload = {
       creator_user_id: authContext.userId,
       organization_id: authContext.organizationId,
-
       title: form.title.trim(),
       description: form.description.trim(),
-
       ticket_type_id: form.ticket_type_id,
       ticket_severity_id: form.ticket_severity_id,
       business_impact_id: form.business_impact_id,
       ticket_status_id: form.ticket_status_id,
       ticket_priority_id: form.ticket_priority_id,
-
       deadline: dateToISOEndOfDay(form.deadline_date),
       users_impacted: form.users_impacted,
-
-      // ERD: is_deleted NOT NULL
       is_deleted: false,
-
-      // ERD: nullable fields
       assigned_to_user_id:
         form.assigned_to_user_id === "unassigned" ? null : form.assigned_to_user_id,
       resolved_by_user_id: null,
@@ -229,20 +311,24 @@ const CreateTicketPage: React.FC = () => {
 
   const handleCancel = () => navigate("/customer");
 
+  const descriptionCount = form.description.length;
+
   return (
     <div className={`customerPage ${isCollapsed ? "sidebarCollapsed" : ""}`}>
-      {/* Sidebar */}
+      {/* Sidebar (same as CustomerPage) */}
       <aside className="sidebar">
         <div className="brandRow">
           <div className="brand">
-            <div className="brandTitle">{isCollapsed ? "G" : "GIACOM"}</div>
+            <div className="brandTitle">{isCollapsed ? "SQ" : "SmartQuote"}</div>
             {!isCollapsed && <div className="brandSub">Customer Portal</div>}
           </div>
 
           <button
             className="collapseBtn"
-            onClick={() => setIsCollapsed(!isCollapsed)}
             type="button"
+            onClick={toggleSidebar}
+            aria-label="Toggle sidebar"
+            title="Toggle sidebar"
           >
             {isCollapsed ? "➡️" : "⬅️"}
           </button>
@@ -251,61 +337,82 @@ const CreateTicketPage: React.FC = () => {
         <nav className="menu">
           <button
             className={`menuItem ${activeMenu === "Dashboard" ? "active" : ""}`}
-            onClick={() => navigate("/customer")}
-            title={isCollapsed ? "Dashboard" : undefined}
+            onClick={() => {
+              setActiveMenu("Dashboard");
+              navigate("/customer");
+            }}
             type="button"
+            title={isCollapsed ? "Dashboard" : undefined}
           >
-            <span className="menuIcon">🏠</span>
+            <span className="menuIcon">{Icon.Home}</span>
             {!isCollapsed && <span className="menuLabel">Dashboard</span>}
           </button>
 
           <button
             className={`menuItem ${activeMenu === "My Tickets" ? "active" : ""}`}
             onClick={() => setActiveMenu("My Tickets")}
-            title={isCollapsed ? "My Tickets" : undefined}
             type="button"
+            title={isCollapsed ? "My Tickets" : undefined}
           >
-            <span className="menuIcon">🎫</span>
+            <span className="menuIcon">{Icon.Ticket}</span>
             {!isCollapsed && <span className="menuLabel">My Tickets</span>}
           </button>
 
           <button
             className={`menuItem ${activeMenu === "Quotes" ? "active" : ""}`}
             onClick={() => setActiveMenu("Quotes")}
-            title={isCollapsed ? "Quotes" : undefined}
             type="button"
+            title={isCollapsed ? "Quotes" : undefined}
           >
-            <span className="menuIcon">£</span>
+            <span className="menuIcon">{Icon.Pound}</span>
             {!isCollapsed && <span className="menuLabel">Quotes</span>}
           </button>
 
           <button
             className={`menuItem ${activeMenu === "History" ? "active" : ""}`}
             onClick={() => setActiveMenu("History")}
-            title={isCollapsed ? "History" : undefined}
             type="button"
+            title={isCollapsed ? "History" : undefined}
           >
-            <span className="menuIcon">🧾</span>
+            <span className="menuIcon">{Icon.Doc}</span>
             {!isCollapsed && <span className="menuLabel">History</span>}
           </button>
 
           <button
             className={`menuItem ${activeMenu === "Profile" ? "active" : ""}`}
             onClick={() => setActiveMenu("Profile")}
-            title={isCollapsed ? "Profile" : undefined}
             type="button"
+            title={isCollapsed ? "Profile" : undefined}
           >
-            <span className="menuIcon">👤</span>
+            <span className="menuIcon">{Icon.User}</span>
             {!isCollapsed && <span className="menuLabel">Profile</span>}
           </button>
         </nav>
 
-        <div className="sidebarFooter">
-          <div className="userAvatar">👤</div>
-          {!isCollapsed && (
-            <div className="userMeta">
-              <div className="userName">{authContext.name}</div>
-              <div className="userEmail">{authContext.email}</div>
+        <div className="sidebarFooter" ref={profileRef}>
+          <button
+            className="profileTrigger"
+            type="button"
+            onClick={() => setProfileOpen((v) => !v)}
+            aria-label="Open profile menu"
+          >
+            <div className="userAvatar">{Icon.User}</div>
+            {!isCollapsed && (
+              <div className="userMeta">
+                <div className="userName">{CUSTOMER.name}</div>
+                <div className="userEmail">{CUSTOMER.email}</div>
+              </div>
+            )}
+          </button>
+
+          {profileOpen && !isCollapsed && (
+            <div className="profileDropdown" role="menu">
+              <button className="dropdownItem" type="button" onClick={handleViewUserInfo}>
+                View User Information
+              </button>
+              <button className="dropdownItem logout" type="button" onClick={handleLogout}>
+                Logout
+              </button>
             </div>
           )}
         </div>
@@ -334,7 +441,6 @@ const CreateTicketPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Ticket Type */}
             <div className="field">
               <label className="label">
                 Ticket Type <span className="req">*</span>
@@ -352,7 +458,6 @@ const CreateTicketPage: React.FC = () => {
               </select>
             </div>
 
-            {/* Title */}
             <div className="field">
               <label className="label">
                 Title <span className="req">*</span>
@@ -366,7 +471,6 @@ const CreateTicketPage: React.FC = () => {
               />
             </div>
 
-            {/* Description */}
             <div className="field">
               <label className="label">
                 Description <span className="req">*</span>
@@ -384,7 +488,6 @@ const CreateTicketPage: React.FC = () => {
             </div>
 
             <div className="grid2">
-              {/* Severity */}
               <div className="field">
                 <label className="label">
                   Severity <span className="req">*</span>
@@ -404,7 +507,6 @@ const CreateTicketPage: React.FC = () => {
                 </select>
               </div>
 
-              {/* Business Impact */}
               <div className="field">
                 <label className="label">
                   Business Impact <span className="req">*</span>
@@ -426,7 +528,6 @@ const CreateTicketPage: React.FC = () => {
             </div>
 
             <div className="grid2">
-              {/* Priority */}
               <div className="field">
                 <label className="label">
                   Priority <span className="req">*</span>
@@ -446,7 +547,6 @@ const CreateTicketPage: React.FC = () => {
                 </select>
               </div>
 
-              {/* Status */}
               <div className="field">
                 <label className="label">
                   Status <span className="req">*</span>
@@ -468,7 +568,6 @@ const CreateTicketPage: React.FC = () => {
             </div>
 
             <div className="grid2">
-              {/* Deadline */}
               <div className="field">
                 <label className="label">
                   Deadline <span className="req">*</span>
@@ -482,7 +581,6 @@ const CreateTicketPage: React.FC = () => {
                 />
               </div>
 
-              {/* Users impacted */}
               <div className="field">
                 <label className="label">
                   Users Impacted <span className="req">*</span>
@@ -492,15 +590,12 @@ const CreateTicketPage: React.FC = () => {
                   min={1}
                   className="control"
                   value={form.users_impacted}
-                  onChange={(e) =>
-                    setField("users_impacted", Number(e.target.value))
-                  }
+                  onChange={(e) => setField("users_impacted", Number(e.target.value))}
                   required
                 />
               </div>
             </div>
 
-            {/* Optional ERD fields */}
             <div className="grid2">
               <div className="field">
                 <label className="label">Assign To</label>
@@ -560,6 +655,8 @@ const CreateTicketPage: React.FC = () => {
 };
 
 export default CreateTicketPage;
+
+
 
 
 

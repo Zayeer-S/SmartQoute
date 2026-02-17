@@ -16,6 +16,147 @@ type StatCard = {
   icon: React.ReactNode;
 };
 
+const adminUser = { name: "Admin User", email: "admin@company.com" } as const;
+
+/** Sidebar icon set (outline style) */
+const Icon = {
+  Home: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10.5z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
+  Tickets: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4V7z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M9 9h6M9 12h6M9 15h6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  ),
+  Quotes: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M7 3h10l3 3v15a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M17 3v4h4"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M8 11h8M8 15h8M8 19h5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  ),
+
+  /* FIXED: Customers icon (clean + centered) */
+  Users: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M16 11a4 4 0 1 0-8 0 4 4 0 0 0 8 0Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M3 21a9 9 0 0 1 18 0"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  ),
+
+  Analytics: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M4 19V5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M4 19h16"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M8 17V11M12 17V7M16 17v-4"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  ),
+
+  /* FIXED: Settings icon (balanced cog) */
+  Settings: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M19.4 15a7.7 7.7 0 0 0 .1-1 7.7 7.7 0 0 0-.1-1l2-1.2-2-3.4-2.2.8c-.5-.4-1.1-.8-1.8-1l-.3-2.3h-4l-.3 2.3c-.7.2-1.3.6-1.8 1l-2.2-.8-2 3.4 2 1.2a7.7 7.7 0 0 0-.1 1c0 .3 0 .7.1 1l-2 1.2 2 3.4 2.2-.8c.5.4 1.1.8 1.8 1l.3 2.3h4l.3-2.3c.7-.2 1.3-.6 1.8-1l2.2.8 2-3.4-2-1.2Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
+};
+
+const navItems: Array<{ key: AdminMenuKey; label: string; icon: React.ReactNode }> =
+  [
+    { key: "Dashboard", label: "Dashboard", icon: Icon.Home },
+    { key: "All Tickets", label: "All Tickets", icon: Icon.Tickets },
+    { key: "Quotes", label: "Quotes", icon: Icon.Quotes },
+    { key: "Customers", label: "Customers", icon: Icon.Users },
+    { key: "Analytics", label: "Analytics", icon: Icon.Analytics },
+    { key: "Settings", label: "Settings", icon: Icon.Settings },
+  ];
+
+const statColorByIndex = ["blue", "red", "orange", "green"] as const;
+
 const AdminPage: React.FC = () => {
   const navigate = useNavigate();
 
@@ -30,12 +171,6 @@ const AdminPage: React.FC = () => {
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement | null>(null);
 
-  const adminUser = useMemo(
-    () => ({ name: "Admin User", email: "admin@company.com" }),
-    []
-  );
-
-  // Close dropdown on outside click
   useEffect(() => {
     const onMouseDown = (e: MouseEvent) => {
       if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
@@ -47,18 +182,10 @@ const AdminPage: React.FC = () => {
   }, []);
 
   const handleLogout = () => {
-    // Optional: clear auth/session data
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setProfileOpen(false);
     navigate("/login");
-  };
-
-  const handleViewUserInfo = () => {
-    setProfileOpen(false);
-    alert("View User Information (placeholder)");
-    // If you have a route:
-    // navigate("/admin/profile");
   };
 
   const stats: StatCard[] = useMemo(
@@ -68,7 +195,7 @@ const AdminPage: React.FC = () => {
         value: 0,
         icon: (
           <svg viewBox="0 0 24 24" className="statSvg" aria-hidden="true">
-            <path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v2a2 2 0 0 1-2 2h-1v2h1a2 2 0 0 1 2 2v2a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-2a2 2 0 0 1 2-2h1v-2H6a2 2 0 0 1-2-2V7zm3-1a1 1 0 0 0-1 1v2h12V7a1 1 0 0 0-1-1H7zm2 7v2h6v-2H9zm-3 4v2a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-2H6z" />
+            <path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v2a2 2 0 0 1-2 2h-1v2h1a2 2 0 0 1 2 2v2a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-2a2 2 0 0 1 2-2h1v-2H6a2 2 0 0 1-2-2V7z" />
           </svg>
         ),
       },
@@ -103,21 +230,27 @@ const AdminPage: React.FC = () => {
     []
   );
 
+  const toggleSidebar = () => {
+    setIsCollapsed((v) => {
+      const next = !v;
+      if (next) setProfileOpen(false);
+      return next;
+    });
+  };
+
   return (
     <div className={`adminPage ${isCollapsed ? "adminCollapsed" : ""}`}>
       {/* Sidebar */}
       <aside className="adminSidebar">
-        <div className="brandRow">
-          <div className="brand">
-            <div className="brandTitle">
-              {isCollapsed ? "SQ" : "SmartQuote Admin"}
-            </div>
+        <div className="adminBrandHeader">
+          <div className="brandBlock">
+            <div className="brandTitle">{isCollapsed ? "SQ" : "SmartQuote Admin"}</div>
             {!isCollapsed && <div className="brandSub">Support Team Portal</div>}
           </div>
 
           <button
             className="collapseBtn"
-            onClick={() => setIsCollapsed((v) => !v)}
+            onClick={toggleSidebar}
             type="button"
             aria-label="Toggle sidebar"
             title="Toggle sidebar"
@@ -126,77 +259,42 @@ const AdminPage: React.FC = () => {
           </button>
         </div>
 
-        <nav className="menu">
-          <button
-            className={`menuItem ${activeMenu === "Dashboard" ? "active" : ""}`}
-            onClick={() => setActiveMenu("Dashboard")}
-            type="button"
-            title={isCollapsed ? "Dashboard" : undefined}
-          >
-            <span className="menuIcon">🏠</span>
-            {!isCollapsed && <span className="menuLabel">Dashboard</span>}
-          </button>
-
-          <button
-            className={`menuItem ${activeMenu === "All Tickets" ? "active" : ""}`}
-            onClick={() => setActiveMenu("All Tickets")}
-            type="button"
-            title={isCollapsed ? "All Tickets" : undefined}
-          >
-            <span className="menuIcon">🎫</span>
-            {!isCollapsed && <span className="menuLabel">All Tickets</span>}
-          </button>
-
-          <button
-            className={`menuItem ${activeMenu === "Quotes" ? "active" : ""}`}
-            onClick={() => setActiveMenu("Quotes")}
-            type="button"
-            title={isCollapsed ? "Quotes" : undefined}
-          >
-            <span className="menuIcon">£</span>
-            {!isCollapsed && <span className="menuLabel">Quotes</span>}
-          </button>
-
-          <button
-            className={`menuItem ${activeMenu === "Customers" ? "active" : ""}`}
-            onClick={() => setActiveMenu("Customers")}
-            type="button"
-            title={isCollapsed ? "Customers" : undefined}
-          >
-            <span className="menuIcon">👥</span>
-            {!isCollapsed && <span className="menuLabel">Customers</span>}
-          </button>
-
-          <button
-            className={`menuItem ${activeMenu === "Analytics" ? "active" : ""}`}
-            onClick={() => setActiveMenu("Analytics")}
-            type="button"
-            title={isCollapsed ? "Analytics" : undefined}
-          >
-            <span className="menuIcon">📊</span>
-            {!isCollapsed && <span className="menuLabel">Analytics</span>}
-          </button>
-
-          <button
-            className={`menuItem ${activeMenu === "Settings" ? "active" : ""}`}
-            onClick={() => setActiveMenu("Settings")}
-            type="button"
-            title={isCollapsed ? "Settings" : undefined}
-          >
-            <span className="menuIcon">⚙️</span>
-            {!isCollapsed && <span className="menuLabel">Settings</span>}
-          </button>
+        <nav className="adminNav">
+          {navItems.map((item) => (
+            <button
+              key={item.key}
+              className={`adminNavItem ${activeMenu === item.key ? "active" : ""}`}
+              onClick={() => setActiveMenu(item.key)}
+              type="button"
+              title={isCollapsed ? item.label : undefined}
+            >
+              <span className="adminNavIcon">{item.icon}</span>
+              {!isCollapsed && <span className="adminNavLabel">{item.label}</span>}
+            </button>
+          ))}
         </nav>
 
         {/* Footer + dropdown */}
-        <div className="sidebarFooter" ref={profileRef}>
+        <div className="adminSidebarFooter" ref={profileRef}>
+          <div className="footerDivider" />
+
           <button
             className="profileTrigger"
             type="button"
             onClick={() => setProfileOpen((v) => !v)}
             aria-label="Open profile menu"
           >
-            <div className="userAvatar">👤</div>
+            <div className="userAvatar">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4zm0 2c-5 0-9 2.5-9 5.5V21h18v-1.5C21 16.5 17 14 12 14z"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                />
+              </svg>
+            </div>
+
             {!isCollapsed && (
               <div className="userMeta">
                 <div className="userName">{adminUser.name}</div>
@@ -210,15 +308,16 @@ const AdminPage: React.FC = () => {
               <button
                 className="dropdownItem"
                 type="button"
-                onClick={handleViewUserInfo}
+                onClick={() => alert("User info (placeholder)")}
+                role="menuitem"
               >
                 View User Information
               </button>
-
               <button
                 className="dropdownItem logout"
                 type="button"
                 onClick={handleLogout}
+                role="menuitem"
               >
                 Logout
               </button>
@@ -232,16 +331,14 @@ const AdminPage: React.FC = () => {
         <header className="topBar">
           <div>
             <h1 className="pageTitle">Admin Dashboard</h1>
-            <p className="pageSubtitle">
-              Manage tickets, quotes, and customer requests
-            </p>
+            <p className="pageSubtitle">Manage tickets, quotes, and customer requests</p>
           </div>
         </header>
 
         <section className="statsGrid">
-          {stats.map((s) => (
+          {stats.map((s, idx) => (
             <div key={s.label} className="statCard">
-              <div className="statIcon">{s.icon}</div>
+              <div className={`statIcon ${statColorByIndex[idx] ?? "blue"}`}>{s.icon}</div>
               <div className="statValue">{s.value}</div>
               <div className="statLabel">{s.label}</div>
             </div>
@@ -250,9 +347,6 @@ const AdminPage: React.FC = () => {
 
         <section className="actionsRow">
           <div className="searchWrap">
-            <span className="searchIcon" aria-hidden="true">
-              🔎
-            </span>
             <input
               className="searchInput"
               value={query}
@@ -317,5 +411,7 @@ const AdminPage: React.FC = () => {
 };
 
 export default AdminPage;
+
+
 
 
