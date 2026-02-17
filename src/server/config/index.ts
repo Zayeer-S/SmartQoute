@@ -3,3 +3,4 @@ export {
   databaseConfig as databaseConfig,
   getConfig as getDatabaseConfig,
 } from './database-config';
+export { passwordConfig, authConfig, authRateLimitConfig } from './auth-config';
