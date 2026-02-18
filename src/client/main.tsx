@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/login/LoginPage';
 import CustomerPage from './pages/customer/CustomerPage';
 import CreateTicketPage from './pages/customer/CreateTicketPage';
+import Profile from './pages/customer/Profile';
 import AdminPage from './pages/admin/AdminPage';
 
 createRoot(document.getElementById('root') as HTMLElement).render(
@@ -13,6 +14,7 @@ createRoot(document.getElementById('root') as HTMLElement).render(
         <Route path='/login' element={<LoginPage />} />
         <Route path='/customer' element={<CustomerPage />} />
         <Route path='/customer/create' element={<CreateTicketPage />} />
+        <Route path='/customer/Profile' element={<Profile />} />
         <Route path='/admin' element={<AdminPage />} />
       </Routes>
     </BrowserRouter>
