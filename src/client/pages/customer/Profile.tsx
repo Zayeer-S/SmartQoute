@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Profile.css";
 
@@ -175,6 +175,11 @@ const Icons = {
 
 const Profile: React.FC = () => {
   const navigate = useNavigate();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const toggleSidebar = useCallback(() => {
+    setIsCollapsed((v) => !v);
+  }, []);
 
   // Placeholder data (swap with API later)
   const user = useMemo(
@@ -223,88 +228,80 @@ const Profile: React.FC = () => {
   );
 
   return (
-    <div className="profilePage">
-      {/* Slim left sidebar */}
+    <div className={`profilePage ${isCollapsed ? "sidebarCollapsed" : ""}`}>
       <aside className="pSidebar" aria-label="Sidebar navigation">
-        <button
-          className="pSidebarExpand"
-          type="button"
-          aria-label="Expand sidebar"
-          title="Expand"
-        >
-          <span className="pSidebarExpandIcon" aria-hidden="true">
-            ›
-          </span>
-        </button>
+        <div className="pBrandRow">
+          <div className="pBrandText">
+            <div className="pBrandTitle pBrandTitleFull">SmartQuote</div>
+            <div className="pBrandTitle pBrandTitleShort">SQ</div>
+            <div className="pBrandSub">Customer Portal</div>
+          </div>
+
+          <button
+            className="pSidebarExpand"
+            type="button"
+            onClick={toggleSidebar}
+            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            <span className="pSidebarExpandIcon" aria-hidden="true">
+              ‹
+            </span>
+          </button>
+        </div>
 
         <nav className="pNav" aria-label="Primary">
-          <button
-            className="pNavBtn"
-            type="button"
-            onClick={() => navigate("/customer")}
-          >
+          <button className="pNavBtn" type="button" onClick={() => navigate("/customer")}>
             <span className="pNavIcon">{Icons.Home}</span>
+            <span className="pNavLabel">Dashboard</span>
           </button>
-          <button
-            className="pNavBtn"
-            type="button"
-            onClick={() => navigate("/customer/tickets")}
-          >
+
+          <button className="pNavBtn" type="button" onClick={() => navigate("/customer/tickets")}>
             <span className="pNavIcon">{Icons.Ticket}</span>
+            <span className="pNavLabel">My Tickets</span>
           </button>
-          <button
-            className="pNavBtn"
-            type="button"
-            onClick={() => navigate("/customer/quotes")}
-          >
+
+          <button className="pNavBtn" type="button" onClick={() => navigate("/customer/quotes")}>
             <span className="pNavIcon">{Icons.Pound}</span>
+            <span className="pNavLabel">Quotes</span>
           </button>
-          <button
-            className="pNavBtn"
-            type="button"
-            onClick={() => navigate("/customer/history")}
-          >
+
+          <button className="pNavBtn" type="button" onClick={() => navigate("/customer/history")}>
             <span className="pNavIcon">{Icons.Doc}</span>
+            <span className="pNavLabel">History</span>
           </button>
-          <button
-            className="pNavBtn active"
-            type="button"
-            onClick={() => navigate("/customer/profile")}
-          >
+
+          <button className="pNavBtn active" type="button" onClick={() => navigate("/customer/profile")}>
             <span className="pNavIcon">{Icons.User}</span>
+            <span className="pNavLabel">Profile</span>
           </button>
         </nav>
 
         <div className="pSidebarBottom">
           <button className="pSidebarAvatar" type="button" aria-label="Account">
             <span className="pNavIcon">{Icons.User}</span>
+            <span className="pAvatarLabel">
+              {user.firstName} {user.lastName}
+            </span>
           </button>
         </div>
       </aside>
 
-      {/* Main content */}
       <main className="pMain">
         <header className="pTop">
           <div>
             <h1 className="pTitle">Profile</h1>
-            <p className="pSub">
-              Manage your account information and preferences
-            </p>
+            <p className="pSub">Manage your account information and preferences</p>
           </div>
 
           <div className="pTopRight">
-            <button
-              className="editBtn"
-              type="button"
-              onClick={() => alert("Edit Profile (placeholder)")}
-            >
+            <button className="editBtn" type="button" onClick={() => alert("Edit Profile (placeholder)")}>
               ✎&nbsp; Edit Profile
             </button>
           </div>
         </header>
 
         <section className="pGrid">
-          {/* Left column */}
           <div className="pLeft">
             <section className="card profileCard">
               <div className="bigAvatar" aria-hidden="true">
@@ -349,7 +346,6 @@ const Profile: React.FC = () => {
             </section>
           </div>
 
-          {/* Right column */}
           <div className="pRight">
             <section className="card">
               <div className="cardHeader">
@@ -401,9 +397,7 @@ const Profile: React.FC = () => {
                   <span className="cardIcon">{Icons.Building}</span>
                   <span className="cardTitle">Organization Information</span>
                 </div>
-                <div className="cardSubtitle">
-                  Company details and contact information
-                </div>
+                <div className="cardSubtitle">Company details and contact information</div>
               </div>
 
               <div className="formGrid">
@@ -472,3 +466,4 @@ const Profile: React.FC = () => {
 };
 
 export default Profile;
+

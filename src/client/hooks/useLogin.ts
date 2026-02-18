@@ -25,7 +25,7 @@ export function useLogin(): UseLoginReturn {
       const response = await authAPI.login(credentials);
       tokenStorage.save(response.token, rememberMe);
       const destination =
-        response.user.role.name.toLowerCase() === AUTH_ROLES.CUSTOMER
+        response.user.role.name === AUTH_ROLES.CUSTOMER
           ? CLIENT_ROUTES.CUSTOMER
           : CLIENT_ROUTES.ADMIN;
 
