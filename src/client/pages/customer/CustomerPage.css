@@ -26,8 +26,16 @@
   display: flex;
   background: var(--bg);
   color: var(--text);
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
-    "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Arial,
+    'Noto Sans',
+    'Apple Color Emoji',
+    'Segoe UI Emoji';
 }
 
 /* =========================
@@ -114,7 +122,10 @@
 
   cursor: pointer;
   text-align: left;
-  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+  transition:
+    background 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
 }
 
 .menuItem:hover {
@@ -303,6 +314,7 @@
   margin-left: var(--sidebarW);
   min-height: 100vh;
   overflow-y: auto; /* only main content scrolls */
+  overflow-y: auto; /* only main content scrolls */
 }
 
 .topBar {
@@ -447,7 +459,9 @@
   gap: 10px;
 
   box-shadow: var(--shadow);
-  transition: transform 160ms ease, opacity 160ms ease;
+  transition:
+    transform 160ms ease,
+    opacity 160ms ease;
 }
 
 .primaryBtn:hover {
@@ -540,11 +554,13 @@
   border-radius: 999px;
   border: 1px solid rgba(15, 23, 42, 0.08);
   background: rgba(100, 116, 139, 0.1);
+  background: rgba(100, 116, 139, 0.1);
   color: #334155;
   text-transform: lowercase;
 }
 
 .tag.critical {
+  background: rgba(239, 68, 68, 0.1);
   background: rgba(239, 68, 68, 0.1);
   border-color: rgba(239, 68, 68, 0.25);
   color: #b91c1c;
@@ -559,7 +575,9 @@
   color: #ffffff;
   font-weight: 800;
   cursor: pointer;
-  transition: transform 160ms ease, opacity 160ms ease;
+  transition:
+    transform 160ms ease,
+    opacity 160ms ease;
 }
 
 .ghostBtn:hover {

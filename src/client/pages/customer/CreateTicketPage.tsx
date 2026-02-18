@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./CreateTicketPage.css";
 import "./CustomerPage.css";
 
-type MenuKey = "Dashboard" | "My Tickets" | "Quotes" | "History" | "Profile";
+type MenuKey = 'Dashboard' | 'My Tickets' | 'Quotes' | 'History' | 'Profile';
 
 type LookupOption = { id: number; label: string };
 
@@ -45,50 +45,50 @@ type TicketFormState = {
 };
 
 const TICKET_TYPES: LookupOption[] = [
-  { id: 1, label: "Support - Technical assistance or help" },
-  { id: 2, label: "Incident - Service outage or disruption" },
-  { id: 3, label: "Request - Change or access request" },
-  { id: 4, label: "Billing - Invoices, charges, payments" },
+  { id: 1, label: 'Support - Technical assistance or help' },
+  { id: 2, label: 'Incident - Service outage or disruption' },
+  { id: 3, label: 'Request - Change or access request' },
+  { id: 4, label: 'Billing - Invoices, charges, payments' },
 ];
 
 const SEVERITIES: LookupOption[] = [
-  { id: 1, label: "Low - Minor issue" },
-  { id: 2, label: "Medium - Notable issue" },
-  { id: 3, label: "High - Major issue" },
-  { id: 4, label: "Critical - System down" },
+  { id: 1, label: 'Low - Minor issue' },
+  { id: 2, label: 'Medium - Notable issue' },
+  { id: 3, label: 'High - Major issue' },
+  { id: 4, label: 'Critical - System down' },
 ];
 
 const BUSINESS_IMPACTS: LookupOption[] = [
-  { id: 1, label: "Low - Little to no disruption" },
-  { id: 2, label: "Moderate - Some disruption" },
-  { id: 3, label: "High - Significant disruption" },
-  { id: 4, label: "Severe - Business halted" },
+  { id: 1, label: 'Low - Little to no disruption' },
+  { id: 2, label: 'Moderate - Some disruption' },
+  { id: 3, label: 'High - Significant disruption' },
+  { id: 4, label: 'Severe - Business halted' },
 ];
 
 const PRIORITIES: LookupOption[] = [
-  { id: 1, label: "Low" },
-  { id: 2, label: "Medium" },
-  { id: 3, label: "High" },
-  { id: 4, label: "Urgent" },
+  { id: 1, label: 'Low' },
+  { id: 2, label: 'Medium' },
+  { id: 3, label: 'High' },
+  { id: 4, label: 'Urgent' },
 ];
 
 const STATUSES: LookupOption[] = [
-  { id: 1, label: "New" },
-  { id: 2, label: "Open" },
-  { id: 3, label: "In Progress" },
-  { id: 4, label: "Resolved" },
-  { id: 5, label: "Closed" },
+  { id: 1, label: 'New' },
+  { id: 2, label: 'Open' },
+  { id: 3, label: 'In Progress' },
+  { id: 4, label: 'Resolved' },
+  { id: 5, label: 'Closed' },
 ];
 
 const SLA_POLICIES: LookupOption[] = [
-  { id: 1, label: "Standard SLA" },
-  { id: 2, label: "Premium SLA" },
+  { id: 1, label: 'Standard SLA' },
+  { id: 2, label: 'Premium SLA' },
 ];
 
 const ASSIGNEES: LookupOption[] = [
-  { id: 201, label: "Support Agent 1" },
-  { id: 202, label: "Support Agent 2" },
-  { id: 203, label: "Support Agent 3" },
+  { id: 201, label: 'Support Agent 1' },
+  { id: 202, label: 'Support Agent 2' },
+  { id: 203, label: 'Support Agent 3' },
 ];
 
 // Same icons as CustomerPage
@@ -181,8 +181,8 @@ const Icon = {
 const CUSTOMER = { name: "Guest", email: "guest@smartquote.com" } as const;
 
 function dateToISOEndOfDay(dateStr: string): string {
-  if (!dateStr) return "";
-  const [yyyy, mm, dd] = dateStr.split("-").map(Number);
+  if (!dateStr) return '';
+  const [yyyy, mm, dd] = dateStr.split('-').map(Number);
   const dt = new Date(yyyy, (mm ?? 1) - 1, dd ?? 1, 23, 59, 59, 0);
   return dt.toISOString();
 }
@@ -190,7 +190,7 @@ function dateToISOEndOfDay(dateStr: string): string {
 const CreateTicketPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const [activeMenu, setActiveMenu] = useState<MenuKey>("My Tickets");
+  const [activeMenu, setActiveMenu] = useState<MenuKey>('My Tickets');
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   // Sidebar dropdown (same behavior as CustomerPage)
@@ -261,7 +261,7 @@ const CreateTicketPage: React.FC = () => {
     if (!form.description.trim()) return alert("Description is required.");
     if (!form.deadline_date) return alert("Deadline is required.");
     if (!Number.isFinite(form.users_impacted) || form.users_impacted < 1) {
-      return alert("Users impacted must be 1 or more.");
+      return alert('Users impacted must be 1 or more.');
     }
 
     const payload: CreateTicketPayload = {
@@ -278,34 +278,30 @@ const CreateTicketPage: React.FC = () => {
       users_impacted: form.users_impacted,
       is_deleted: false,
       assigned_to_user_id:
-        form.assigned_to_user_id === "unassigned" ? null : form.assigned_to_user_id,
+        form.assigned_to_user_id === 'unassigned' ? null : form.assigned_to_user_id,
       resolved_by_user_id: null,
-      sla_policy_id: form.sla_policy_id === "none" ? null : form.sla_policy_id,
+      sla_policy_id: form.sla_policy_id === 'none' ? null : form.sla_policy_id,
       sla_response_due_at: null,
       sla_resolution_due_at: null,
     };
 
     try {
-      const res = await fetch("/api/tickets", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/tickets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
-        const text = await res.text().catch(() => "");
+        const text = await res.text().catch(() => '');
         throw new Error(text || `Request failed (${res.status})`);
       }
 
-      alert("Ticket created successfully.");
-      navigate("/customer");
+      alert('Ticket created successfully.');
+      navigate('/customer');
     } catch (err) {
       console.error(err);
-      alert(
-        `Failed to create ticket: ${
-          err instanceof Error ? err.message : "Unknown error"
-        }`
-      );
+      alert(`Failed to create ticket: ${err instanceof Error ? err.message : 'Unknown error'}`);
     }
   };
 
@@ -330,7 +326,7 @@ const CreateTicketPage: React.FC = () => {
             aria-label="Toggle sidebar"
             title="Toggle sidebar"
           >
-            {isCollapsed ? "➡️" : "⬅️"}
+            {isCollapsed ? '➡️' : '⬅️'}
           </button>
         </div>
 
@@ -424,8 +420,8 @@ const CreateTicketPage: React.FC = () => {
           <div>
             <h1 className="createTitle">Create New Ticket</h1>
             <p className="createSubtitle">
-              Fill in the details below. A quote will be automatically generated
-              based on your inputs.
+              Fill in the details below. A quote will be automatically generated based on your
+              inputs.
             </p>
           </div>
         </header>
@@ -448,7 +444,7 @@ const CreateTicketPage: React.FC = () => {
               <select
                 className="control"
                 value={form.ticket_type_id}
-                onChange={(e) => setField("ticket_type_id", Number(e.target.value))}
+                onChange={(e) => setField('ticket_type_id', Number(e.target.value))}
               >
                 {TICKET_TYPES.map((t) => (
                   <option key={t.id} value={t.id}>
@@ -466,7 +462,7 @@ const CreateTicketPage: React.FC = () => {
                 className="control"
                 placeholder="Brief summary of the issue or request"
                 value={form.title}
-                onChange={(e) => setField("title", e.target.value)}
+                onChange={(e) => setField('title', e.target.value)}
                 required
               />
             </div>
@@ -479,7 +475,7 @@ const CreateTicketPage: React.FC = () => {
                 className="control textarea"
                 placeholder="Provide a detailed explanation of the issue or request."
                 value={form.description}
-                onChange={(e) => setField("description", e.target.value)}
+                onChange={(e) => setField('description', e.target.value)}
                 required
               />
               <div className="helpRow">
@@ -495,9 +491,7 @@ const CreateTicketPage: React.FC = () => {
                 <select
                   className="control"
                   value={form.ticket_severity_id}
-                  onChange={(e) =>
-                    setField("ticket_severity_id", Number(e.target.value))
-                  }
+                  onChange={(e) => setField('ticket_severity_id', Number(e.target.value))}
                 >
                   {SEVERITIES.map((s) => (
                     <option key={s.id} value={s.id}>
@@ -514,9 +508,7 @@ const CreateTicketPage: React.FC = () => {
                 <select
                   className="control"
                   value={form.business_impact_id}
-                  onChange={(e) =>
-                    setField("business_impact_id", Number(e.target.value))
-                  }
+                  onChange={(e) => setField('business_impact_id', Number(e.target.value))}
                 >
                   {BUSINESS_IMPACTS.map((b) => (
                     <option key={b.id} value={b.id}>
@@ -535,9 +527,7 @@ const CreateTicketPage: React.FC = () => {
                 <select
                   className="control"
                   value={form.ticket_priority_id}
-                  onChange={(e) =>
-                    setField("ticket_priority_id", Number(e.target.value))
-                  }
+                  onChange={(e) => setField('ticket_priority_id', Number(e.target.value))}
                 >
                   {PRIORITIES.map((p) => (
                     <option key={p.id} value={p.id}>
@@ -554,9 +544,7 @@ const CreateTicketPage: React.FC = () => {
                 <select
                   className="control"
                   value={form.ticket_status_id}
-                  onChange={(e) =>
-                    setField("ticket_status_id", Number(e.target.value))
-                  }
+                  onChange={(e) => setField('ticket_status_id', Number(e.target.value))}
                 >
                   {STATUSES.map((s) => (
                     <option key={s.id} value={s.id}>
@@ -576,7 +564,7 @@ const CreateTicketPage: React.FC = () => {
                   type="date"
                   className="control"
                   value={form.deadline_date}
-                  onChange={(e) => setField("deadline_date", e.target.value)}
+                  onChange={(e) => setField('deadline_date', e.target.value)}
                   required
                 />
               </div>
@@ -604,10 +592,7 @@ const CreateTicketPage: React.FC = () => {
                   value={form.assigned_to_user_id}
                   onChange={(e) => {
                     const v = e.target.value;
-                    setField(
-                      "assigned_to_user_id",
-                      v === "unassigned" ? "unassigned" : Number(v)
-                    );
+                    setField('assigned_to_user_id', v === 'unassigned' ? 'unassigned' : Number(v));
                   }}
                 >
                   <option value="unassigned">Unassigned</option>
@@ -626,7 +611,7 @@ const CreateTicketPage: React.FC = () => {
                   value={form.sla_policy_id}
                   onChange={(e) => {
                     const v = e.target.value;
-                    setField("sla_policy_id", v === "none" ? "none" : Number(v));
+                    setField('sla_policy_id', v === 'none' ? 'none' : Number(v));
                   }}
                 >
                   <option value="none">None</option>

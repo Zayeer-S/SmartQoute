@@ -1,8 +1,13 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./CustomerPage.css";
+/* eslint-disable @typescript-eslint/no-misused-promises */
+/* eslint-disable @typescript-eslint/consistent-type-definitions */
+/* eslint-disable @typescript-eslint/no-floating-promises */
+/* eslint-disable @typescript-eslint/no-confusing-void-expression */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './CustomerPage.css';
 
-type MenuKey = "Dashboard" | "My Tickets" | "Quotes" | "History" | "Profile";
+type MenuKey = 'Dashboard' | 'My Tickets' | 'Quotes' | 'History' | 'Profile';
 
 type StatCard = {
   label: string;
@@ -119,13 +124,31 @@ const TICKETS: Ticket[] = [];
 const CustomerPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const [activeMenu, setActiveMenu] = useState<MenuKey>("Dashboard");
+  const [activeMenu, setActiveMenu] = useState<MenuKey>('Dashboard');
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [query, setQuery] = useState("");
+
+  const [query, setQuery] = useState('');
 
   // Profile dropdown
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement | null>(null);
+
+  // Placeholder user (replace with auth/session later)
+  const customer = useMemo(() => ({ name: 'Guest', email: 'guest@giacom' }), []);
+
+  // Placeholder stats (until DB is connected)
+  const stats: StatCard[] = useMemo(
+    () => [
+      { label: 'Total Tickets', value: '0', icon: '🎫' },
+      { label: 'Active Tickets', value: '0', icon: '🕒' },
+      { label: 'Total Quoted', value: '£0.00', icon: '🧾' },
+      { label: 'Pending Quotes', value: '0', icon: '📄' },
+    ],
+    []
+  );
+
+  // No DB yet => no tickets
+  const tickets: any[] = [];
 
   useEffect(() => {
     const onMouseDown = (e: MouseEvent) => {
@@ -135,39 +158,33 @@ const CustomerPage: React.FC = () => {
       if (!root.contains(e.target as Node)) {
         setProfileOpen(false);
       }
-    };
-
-    document.addEventListener("mousedown", onMouseDown);
-    return () => document.removeEventListener("mousedown", onMouseDown);
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleLogout = useCallback(() => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+  const handleLogout = () => {
+    // Optional: clear auth data if you store it
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setProfileOpen(false);
-    navigate("/login");
-  }, [navigate]);
+    navigate('/login');
+  };
 
   const handleViewUserInfo = useCallback(() => {
     setProfileOpen(false);
-    alert("View User Information (placeholder)");
-  }, []);
-
-  const handleNewTicket = useCallback(() => {
-    navigate("/customer/create");
-  }, [navigate]);
-
-  const toggleSidebar = useCallback(() => {
-    setIsCollapsed((v) => !v);
-  }, []);
+    // Change route if you have one:
+    // navigate("/customer/profile");
+    alert('User information page coming soon.');
+  };
 
   return (
-    <div className={`customerPage ${isCollapsed ? "sidebarCollapsed" : ""}`}>
+    <div className={`customerPage ${isCollapsed ? 'sidebarCollapsed' : ''}`}>
       {/* Sidebar */}
       <aside className="sidebar">
         <div className="brandRow">
           <div className="brand">
-            <div className="brandTitle">{isCollapsed ? "SQ" : "SmartQuote"}</div>
+            <div className="brandTitle">{isCollapsed ? 'G' : 'GIACOM'}</div>
             {!isCollapsed && <div className="brandSub">Customer Portal</div>}
           </div>
 
@@ -178,56 +195,56 @@ const CustomerPage: React.FC = () => {
             aria-label="Toggle sidebar"
             title="Toggle sidebar"
           >
-            {isCollapsed ? "➡️" : "⬅️"}
+            {isCollapsed ? '➡️' : '⬅️'}
           </button>
         </div>
 
         <nav className="menu">
           <button
-            className={`menuItem ${activeMenu === "Dashboard" ? "active" : ""}`}
-            onClick={() => setActiveMenu("Dashboard")}
+            className={`menuItem ${activeMenu === 'Dashboard' ? 'active' : ''}`}
+            onClick={() => setActiveMenu('Dashboard')}
+            title={isCollapsed ? 'Dashboard' : undefined}
             type="button"
-            title={isCollapsed ? "Dashboard" : undefined}
           >
             <span className="menuIcon">{Icon.Home}</span>
             {!isCollapsed && <span className="menuLabel">Dashboard</span>}
           </button>
 
           <button
-            className={`menuItem ${activeMenu === "My Tickets" ? "active" : ""}`}
-            onClick={() => setActiveMenu("My Tickets")}
+            className={`menuItem ${activeMenu === 'My Tickets' ? 'active' : ''}`}
+            onClick={() => setActiveMenu('My Tickets')}
+            title={isCollapsed ? 'My Tickets' : undefined}
             type="button"
-            title={isCollapsed ? "My Tickets" : undefined}
           >
             <span className="menuIcon">{Icon.Ticket}</span>
             {!isCollapsed && <span className="menuLabel">My Tickets</span>}
           </button>
 
           <button
-            className={`menuItem ${activeMenu === "Quotes" ? "active" : ""}`}
-            onClick={() => setActiveMenu("Quotes")}
+            className={`menuItem ${activeMenu === 'Quotes' ? 'active' : ''}`}
+            onClick={() => setActiveMenu('Quotes')}
+            title={isCollapsed ? 'Quotes' : undefined}
             type="button"
-            title={isCollapsed ? "Quotes" : undefined}
           >
             <span className="menuIcon">{Icon.Pound}</span>
             {!isCollapsed && <span className="menuLabel">Quotes</span>}
           </button>
 
           <button
-            className={`menuItem ${activeMenu === "History" ? "active" : ""}`}
-            onClick={() => setActiveMenu("History")}
+            className={`menuItem ${activeMenu === 'History' ? 'active' : ''}`}
+            onClick={() => setActiveMenu('History')}
+            title={isCollapsed ? 'History' : undefined}
             type="button"
-            title={isCollapsed ? "History" : undefined}
           >
             <span className="menuIcon">{Icon.Doc}</span>
             {!isCollapsed && <span className="menuLabel">History</span>}
           </button>
 
           <button
-            className={`menuItem ${activeMenu === "Profile" ? "active" : ""}`}
-            onClick={() => setActiveMenu("Profile")}
+            className={`menuItem ${activeMenu === 'Profile' ? 'active' : ''}`}
+            onClick={() => setActiveMenu('Profile')}
+            title={isCollapsed ? 'Profile' : undefined}
             type="button"
-            title={isCollapsed ? "Profile" : undefined}
           >
             <span className="menuIcon">{Icon.User}</span>
             {!isCollapsed && <span className="menuLabel">Profile</span>}
@@ -256,6 +273,7 @@ const CustomerPage: React.FC = () => {
               <button className="dropdownItem" type="button" onClick={handleViewUserInfo}>
                 View User Information
               </button>
+
               <button className="dropdownItem logout" type="button" onClick={handleLogout}>
                 Logout
               </button>
@@ -268,7 +286,7 @@ const CustomerPage: React.FC = () => {
       <main className="main">
         <header className="topBar">
           <div>
-            <h1 className="pageTitle">{activeMenu}</h1>
+            <h1 className="pageTitle">Dashboard</h1>
             <p className="pageSubtitle">Manage your support tickets and view quotes</p>
           </div>
         </header>
@@ -298,7 +316,7 @@ const CustomerPage: React.FC = () => {
             />
           </div>
 
-          <button className="primaryBtn" type="button" onClick={handleNewTicket}>
+          <button className="primaryBtn" type="button" onClick={() => navigate('/customer/create')}>
             <span className="btnPlus">＋</span>
             New Ticket
           </button>
@@ -309,7 +327,7 @@ const CustomerPage: React.FC = () => {
           {TICKETS.length === 0 ? (
             <div className="emptyState">No tickets found.</div>
           ) : (
-            <div style={{ width: "100%" }}>{/* future list */}</div>
+            <div style={{ width: '100%' }}>{/* Later: render tickets list here */}</div>
           )}
         </section>
       </main>
@@ -318,7 +336,3 @@ const CustomerPage: React.FC = () => {
 };
 
 export default CustomerPage;
-
-
-
-

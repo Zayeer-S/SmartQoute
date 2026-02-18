@@ -1,14 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./AdminPage.css";
+/* eslint-disable @typescript-eslint/no-floating-promises */
+/* eslint-disable @typescript-eslint/no-confusing-void-expression */
+/* eslint-disable @typescript-eslint/consistent-type-definitions */
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './AdminPage.css';
 
-type AdminMenuKey =
-  | "Dashboard"
-  | "All Tickets"
-  | "Quotes"
-  | "Customers"
-  | "Analytics"
-  | "Settings";
+type AdminMenuKey = 'Dashboard' | 'All Tickets' | 'Quotes' | 'Customers' | 'Analytics' | 'Settings';
 
 type StatCard = {
   label: string;
@@ -160,12 +157,12 @@ const statColorByIndex = ["blue", "red", "orange", "green"] as const;
 const AdminPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const [activeMenu, setActiveMenu] = useState<AdminMenuKey>("Dashboard");
+  const [activeMenu, setActiveMenu] = useState<AdminMenuKey>('Dashboard');
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  const [query, setQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All Status");
-  const [priorityFilter, setPriorityFilter] = useState("All Priority");
+  const [query, setQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All Status');
+  const [priorityFilter, setPriorityFilter] = useState('All Priority');
 
   // Profile dropdown
   const [profileOpen, setProfileOpen] = useState(false);
@@ -177,21 +174,21 @@ const AdminPage: React.FC = () => {
         setProfileOpen(false);
       }
     };
-    document.addEventListener("mousedown", onMouseDown);
-    return () => document.removeEventListener("mousedown", onMouseDown);
+    document.addEventListener('mousedown', onMouseDown);
+    return () => document.removeEventListener('mousedown', onMouseDown);
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setProfileOpen(false);
-    navigate("/login");
+    navigate('/login');
   };
 
   const stats: StatCard[] = useMemo(
     () => [
       {
-        label: "Total Tickets",
+        label: 'Total Tickets',
         value: 0,
         icon: (
           <svg viewBox="0 0 24 24" className="statSvg" aria-hidden="true">
@@ -200,7 +197,7 @@ const AdminPage: React.FC = () => {
         ),
       },
       {
-        label: "Urgent Tickets",
+        label: 'Urgent Tickets',
         value: 0,
         icon: (
           <svg viewBox="0 0 24 24" className="statSvg" aria-hidden="true">
@@ -209,7 +206,7 @@ const AdminPage: React.FC = () => {
         ),
       },
       {
-        label: "Unassigned",
+        label: 'Unassigned',
         value: 0,
         icon: (
           <svg viewBox="0 0 24 24" className="statSvg" aria-hidden="true">
@@ -218,7 +215,7 @@ const AdminPage: React.FC = () => {
         ),
       },
       {
-        label: "Pending Quotes",
+        label: 'Pending Quotes',
         value: 0,
         icon: (
           <svg viewBox="0 0 24 24" className="statSvg" aria-hidden="true">
@@ -239,7 +236,7 @@ const AdminPage: React.FC = () => {
   };
 
   return (
-    <div className={`adminPage ${isCollapsed ? "adminCollapsed" : ""}`}>
+    <div className={`adminPage ${isCollapsed ? 'adminCollapsed' : ''}`}>
       {/* Sidebar */}
       <aside className="adminSidebar">
         <div className="adminBrandHeader">
@@ -255,7 +252,7 @@ const AdminPage: React.FC = () => {
             aria-label="Toggle sidebar"
             title="Toggle sidebar"
           >
-            {isCollapsed ? "➡️" : "⬅️"}
+            {isCollapsed ? '➡️' : '⬅️'}
           </button>
         </div>
 
@@ -332,6 +329,7 @@ const AdminPage: React.FC = () => {
           <div>
             <h1 className="pageTitle">Admin Dashboard</h1>
             <p className="pageSubtitle">Manage tickets, quotes, and customer requests</p>
+            <p className="pageSubtitle">Manage tickets, quotes, and customer requests</p>
           </div>
         </header>
 
@@ -399,7 +397,7 @@ const AdminPage: React.FC = () => {
         <button
           className="helpFab"
           type="button"
-          onClick={() => alert("Help (placeholder)")}
+          onClick={() => alert('Help (placeholder)')}
           aria-label="Help"
           title="Help"
         >

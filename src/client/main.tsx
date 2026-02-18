@@ -3,21 +3,23 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/login/LoginPage';
 import CustomerPage from './pages/customer/CustomerPage';
-import CreateTicketPage from './pages/customer/CreateTicketPage';
-import Profile from './pages/customer/Profile';
 import AdminPage from './pages/admin/AdminPage';
+import CreateTicketPage from './pages/customer/CreateTicketPage';
+import { CLIENT_ROUTES } from './constants/client.routes';
 
-createRoot(document.getElementById('root') as HTMLElement).render(
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path='/login' element={<LoginPage />} />
-        <Route path='/customer' element={<CustomerPage />} />
-        <Route path='/customer/create' element={<CreateTicketPage />} />
-        <Route path='/customer/Profile' element={<Profile />} />
-        <Route path='/admin' element={<AdminPage />} />
-      </Routes>
+        <Route path="/">
+          <Route index element={<LoginPage />} />
+          <Route path={CLIENT_ROUTES.LOGIN} element={<LoginPage />} />
+          <Route path={CLIENT_ROUTES.CUSTOMER} element={<CustomerPage />} />
+          <Route path={CLIENT_ROUTES.ADMIN} element={<AdminPage />} />
+          <Route path="/customer/create" element={<CreateTicketPage />} />
+        </Route>
+  </Routes>
     </BrowserRouter>
   </StrictMode>
 );
-
