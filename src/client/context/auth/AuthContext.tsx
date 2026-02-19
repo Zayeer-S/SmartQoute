@@ -53,12 +53,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   );
 
   const logout = useCallback(async () => {
+    // Gate rendering immediately so ProtectedRoute blocks before navigation
+    setIsLoading(true);
+
     try {
       await authAPI.logout();
     } finally {
       tokenStorage.clear();
       setUser(null);
       setPermissions(new Set());
+      setIsLoading(false);
     }
   }, []);
 

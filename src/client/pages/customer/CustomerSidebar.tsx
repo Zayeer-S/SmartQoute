@@ -1,112 +1,60 @@
 import React, { useEffect, useRef, useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../hooks/auth/useAuth';
+import { useSidebar } from '../../hooks/useSidebar';
+import { CLIENT_ROUTES } from '../../constants/client.routes';
+import {
+  HomeIcon,
+  TicketIcon,
+  PoundIcon,
+  DocIcon,
+  UserIcon,
+} from '../../components/icons/CustomerIcons';
 import './CustomerSidebar.css';
 
-export type MenuKey = 'Dashboard' | 'My Tickets' | 'Quotes' | 'History' | 'Profile';
+type MenuKey = 'Dashboard' | 'My Tickets' | 'Quotes' | 'History' | 'Profile';
 
-export type Props = {
-  activeMenu: MenuKey;
-  setActiveMenu: React.Dispatch<React.SetStateAction<MenuKey>>;
-  isCollapsed: boolean;
-  toggleSidebar: () => void;
+const ROUTE_TO_MENU: Record<string, MenuKey> = {
+  [CLIENT_ROUTES.CUSTOMER]: 'Dashboard',
+  [CLIENT_ROUTES.CUSTOMER_TICKETS]: 'My Tickets',
+  [CLIENT_ROUTES.CUSTOMER_QUOTES]: 'Quotes',
+  [CLIENT_ROUTES.CUSTOMER_HISTORY]: 'History',
+  [CLIENT_ROUTES.CUSTOMER_PROFILE]: 'Profile',
 };
 
-const Icon = {
-  Home: (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10.5z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinejoin="round"
-      />
-    </svg>
-  ),
-  Ticket: (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4V7z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M9 9h6M9 12h6M9 15h6"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
-  ),
-  Pound: (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        d="M14 4a4 4 0 0 0-4 4v2h5a1 1 0 1 1 0 2h-5v2c0 1.2-.3 2.3-1 3h8a1 1 0 1 1 0 2H7a1 1 0 0 1-.7-1.7c1.2-1.2 1.7-2.4 1.7-4.3v-1H7a1 1 0 1 1 0-2h1V8a6 6 0 0 1 6-6h2a1 1 0 1 1 0 2h-2z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  ),
-  Doc: (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        d="M7 3h10l4 4v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinejoin="round"
-      />
-      <path d="M17 3v5h5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-      <path
-        d="M8 12h8M8 16h8"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
-  ),
-  User: (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" fill="none" stroke="currentColor" strokeWidth="2" />
-      <path d="M4 21a8 8 0 0 1 16 0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  ),
-} as const;
-
-const CustomerSidebar: React.FC<Props> = ({
-  activeMenu,
-  setActiveMenu,
-  isCollapsed,
-  toggleSidebar,
-}) => {
+const CustomerSidebar: React.FC = () => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const { user, logout } = useAuth();
+  const { isCollapsed, toggle } = useSidebar();
+
+  const activeMenu: MenuKey = ROUTE_TO_MENU[pathname] ?? 'Dashboard';
 
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement | null>(null);
 
-  const customer = useMemo(
-    () => ({ name: 'Guest', email: 'guest@smartquote.com' }),
-    []
-  );
+  const displayName = useMemo(() => {
+    if (!user) return 'Guest';
+    return user.middleName
+      ? `${user.firstName} ${user.middleName} ${user.lastName}`
+      : `${user.firstName} ${user.lastName}`;
+  }, [user]);
 
-  const handleLogout = useCallback(() => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+  const handleLogout = useCallback(async () => {
     setProfileOpen(false);
-    navigate('/login');
-  }, [navigate]);
+    await logout();
+    void navigate(CLIENT_ROUTES.LOGIN, { replace: true });
+  }, [logout, navigate]);
 
   const handleViewUserInfo = useCallback(() => {
     setProfileOpen(false);
-    navigate('/customer/profile');
+    void navigate(CLIENT_ROUTES.CUSTOMER_PROFILE);
   }, [navigate]);
+
+  const onToggle = useCallback(() => {
+    toggle();
+    setProfileOpen(false);
+  }, [toggle]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -116,18 +64,15 @@ const CustomerSidebar: React.FC<Props> = ({
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
-  const onToggle = useCallback(() => {
-    toggleSidebar();
-    setProfileOpen(false);
-  }, [toggleSidebar]);
-
   return (
-    <aside className="sidebar">
+    <aside className="sidebar" aria-label="Customer portal sidebar" data-testid="customer-sidebar">
       <div className="brandRow">
-        <div className="brand">
+        <div className="brand" aria-hidden="true">
           <div className="brandTitle">{isCollapsed ? 'SQ' : 'SmartQuote'}</div>
           {!isCollapsed && <div className="brandSub">Customer Portal</div>}
         </div>
@@ -136,68 +81,75 @@ const CustomerSidebar: React.FC<Props> = ({
           className="collapseBtn"
           type="button"
           onClick={onToggle}
-          aria-label="Toggle sidebar"
+          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          aria-expanded={!isCollapsed}
+          data-testid="sidebar-toggle"
         />
       </div>
 
-      <nav className="menu">
+      <nav className="menu" aria-label="Customer navigation">
         <button
           className={`menuItem ${activeMenu === 'Dashboard' ? 'active' : ''}`}
-          onClick={() => {
-            setActiveMenu('Dashboard');
-            navigate('/customer');
-          }}
+          onClick={() => void navigate(CLIENT_ROUTES.CUSTOMER)}
           type="button"
+          aria-current={activeMenu === 'Dashboard' ? 'page' : undefined}
+          data-testid="nav-dashboard"
         >
-          <span className="menuIcon">{Icon.Home}</span>
+          <span className="menuIcon" aria-hidden="true">
+            <HomeIcon />
+          </span>
           {!isCollapsed && <span className="menuLabel">Dashboard</span>}
         </button>
 
         <button
           className={`menuItem ${activeMenu === 'My Tickets' ? 'active' : ''}`}
-          onClick={() => {
-            setActiveMenu('My Tickets');
-            navigate('/customer/tickets');
-          }}
+          onClick={() => void navigate(CLIENT_ROUTES.CUSTOMER_TICKETS)}
           type="button"
+          aria-current={activeMenu === 'My Tickets' ? 'page' : undefined}
+          data-testid="nav-my-tickets"
         >
-          <span className="menuIcon">{Icon.Ticket}</span>
+          <span className="menuIcon" aria-hidden="true">
+            <TicketIcon />
+          </span>
           {!isCollapsed && <span className="menuLabel">My Tickets</span>}
         </button>
 
         <button
           className={`menuItem ${activeMenu === 'Quotes' ? 'active' : ''}`}
-          onClick={() => {
-            setActiveMenu('Quotes');
-            navigate('/customer/quotes');
-          }}
+          onClick={() => void navigate(CLIENT_ROUTES.CUSTOMER_QUOTES)}
           type="button"
+          aria-current={activeMenu === 'Quotes' ? 'page' : undefined}
+          data-testid="nav-quotes"
         >
-          <span className="menuIcon">{Icon.Pound}</span>
+          <span className="menuIcon" aria-hidden="true">
+            <PoundIcon />
+          </span>
           {!isCollapsed && <span className="menuLabel">Quotes</span>}
         </button>
 
         <button
           className={`menuItem ${activeMenu === 'History' ? 'active' : ''}`}
-          onClick={() => {
-            setActiveMenu('History');
-            navigate('/customer/history');
-          }}
+          onClick={() => void navigate(CLIENT_ROUTES.CUSTOMER_HISTORY)}
           type="button"
+          aria-current={activeMenu === 'History' ? 'page' : undefined}
+          data-testid="nav-history"
         >
-          <span className="menuIcon">{Icon.Doc}</span>
+          <span className="menuIcon" aria-hidden="true">
+            <DocIcon />
+          </span>
           {!isCollapsed && <span className="menuLabel">History</span>}
         </button>
 
         <button
           className={`menuItem ${activeMenu === 'Profile' ? 'active' : ''}`}
-          onClick={() => {
-            setActiveMenu('Profile');
-            navigate('/customer/profile');
-          }}
+          onClick={() => void navigate(CLIENT_ROUTES.CUSTOMER_PROFILE)}
           type="button"
+          aria-current={activeMenu === 'Profile' ? 'page' : undefined}
+          data-testid="nav-profile"
         >
-          <span className="menuIcon">{Icon.User}</span>
+          <span className="menuIcon" aria-hidden="true">
+            <UserIcon />
+          </span>
           {!isCollapsed && <span className="menuLabel">Profile</span>}
         </button>
       </nav>
@@ -206,24 +158,49 @@ const CustomerSidebar: React.FC<Props> = ({
         <button
           className="profileTrigger"
           type="button"
-          onClick={() => setProfileOpen((v) => !v)}
+          onClick={() => {
+            setProfileOpen((v) => !v);
+          }}
+          aria-label={`Account menu for ${displayName}`}
+          aria-expanded={profileOpen}
+          aria-haspopup="menu"
+          data-testid="profile-trigger"
         >
-          <div className="userAvatar">{Icon.User}</div>
+          <div className="userAvatar" aria-hidden="true">
+            <UserIcon />
+          </div>
           {!isCollapsed && (
             <div className="userMeta">
-              <div className="userName">{customer.name}</div>
-              <div className="userEmail">{customer.email}</div>
+              <div className="userName">{displayName}</div>
+              <div className="userEmail">{user?.email ?? ''}</div>
             </div>
           )}
         </button>
 
         {profileOpen && !isCollapsed && (
-          <div className="profileDropdown" role="menu">
-            <button className="dropdownItem" type="button" onClick={handleViewUserInfo}>
+          <div
+            className="profileDropdown"
+            role="menu"
+            aria-label="Account options"
+            data-testid="profile-dropdown"
+          >
+            <button
+              className="dropdownItem"
+              type="button"
+              role="menuitem"
+              onClick={handleViewUserInfo}
+              data-testid="profile-view-info"
+            >
               View User Information
             </button>
 
-            <button className="dropdownItem logout" type="button" onClick={handleLogout}>
+            <button
+              className="dropdownItem logout"
+              type="button"
+              role="menuitem"
+              onClick={() => void handleLogout()}
+              data-testid="profile-logout"
+            >
               Logout
             </button>
           </div>
