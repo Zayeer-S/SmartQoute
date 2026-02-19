@@ -1,7 +1,7 @@
 import React from 'react';
-import CustomerSidebar from './CustomerSidebar';
 import { useSidebar } from '../../hooks/useSidebar';
 import './CustomerPage.css';
+import CustomerSidebar from '../../pages/customer/CustomerSidebar';
 
 interface Props {
   children: React.ReactNode;

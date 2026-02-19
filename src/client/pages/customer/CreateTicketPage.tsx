@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import CustomerLayout from './CustomerLayout';
+import CustomerLayout from '../../components/layout/CustomerLayout';
 import { useAuth } from '../../hooks/auth/useAuth';
 import { useCreateTicket } from '../../hooks/tickets/useCreateTicket';
 import './CreateTicketPage.css';

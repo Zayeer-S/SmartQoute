@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import CustomerLayout from './CustomerLayout';
+import CustomerLayout from '../../components/layout/CustomerLayout';
 import { CLIENT_ROUTES } from '../../constants/client.routes';
 import { useListTickets } from '../../hooks/tickets/useListTicket';
 import type { TicketDetailResponse } from '../../../shared/contracts/ticket-contracts';
