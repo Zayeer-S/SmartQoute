@@ -2,7 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './context/auth/AuthContext';
-import { SidebarProvider } from './context/sidebar/SideBarContext';
+import { SidebarProvider } from './context/sidebar/SidebarContext';
 import LoginPage from './pages/login/LoginPage';
 import CustomerPage from './pages/customer/CustomerPage';
 import AdminPage from './pages/admin/AdminPage';
@@ -25,7 +25,17 @@ createRoot(document.getElementById('root')!).render(
                 <Route index element={<LoginPage />} />
                 <Route path={CLIENT_ROUTES.LOGIN} element={<LoginPage />} />
 
-                <Route element={<ProtectedRoute allowedRoles={[AUTH_ROLES.ADMIN]} />}>
+                <Route
+                  element={
+                    <ProtectedRoute
+                      allowedRoles={[
+                        AUTH_ROLES.ADMIN,
+                        AUTH_ROLES.MANAGER,
+                        AUTH_ROLES.SUPPORT_AGENT,
+                      ]}
+                    />
+                  }
+                >
                   <Route path={CLIENT_ROUTES.ADMIN} element={<AdminPage />} />
                 </Route>
 
