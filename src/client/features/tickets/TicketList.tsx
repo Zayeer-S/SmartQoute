@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useListTickets } from '../../hooks/tickets/useListTicket';
 import { CLIENT_ROUTES } from '../../constants/client.routes';
-import { useTicketFilters } from '../../pages/customer/useTicketFilters';
+import { useTicketFilters } from '../../hooks/useTicketFilters';
 import TicketCard from './CustomerTicketCard';
 import TicketFilters from './TicketFilters';
 import TicketPagination from './TicketPagination';
