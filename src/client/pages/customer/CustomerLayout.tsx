@@ -37,6 +37,11 @@ const CustomerLayout: React.FC = () => {
               Submit Ticket
             </NavLink>
           </li>
+          <li>
+            <NavLink to={CLIENT_ROUTES.CUSTOMER.SETTINGS} data-testid="nav-settings">
+              Settings
+            </NavLink>
+          </li>
         </ul>
 
         <div>
