@@ -1,125 +1,68 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-/* eslint-disable @typescript-eslint/consistent-type-definitions */
-/* eslint-disable @typescript-eslint/no-deprecated */
-/* eslint-disable @typescript-eslint/no-floating-promises */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/no-misused-promises */
-/* eslint-disable @typescript-eslint/no-confusing-void-expression */
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import CustomerSidebar from './CustomerSidebar';
+import { useAuth } from '../../hooks/auth/useAuth';
+import { useCreateTicket } from '../../hooks/tickets/useCreateTicket';
 import './CreateTicketPage.css';
 import './CustomerPage.css';
+import {
+  BUSINESS_IMPACTS,
+  TICKET_PRIORITIES,
+  TICKET_SEVERITIES,
+  TICKET_TYPES,
+} from '../../../shared/constants';
+import { CLIENT_ROUTES } from '../../constants/client.routes';
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
 
 type MenuKey = 'Dashboard' | 'My Tickets' | 'Quotes' | 'History' | 'Profile';
 
-// Matches ERD lookup tables: ticket_types, ticket_severities, business_impacts,
-// ticket_statuses, ticket_priorities, sla_policies, users/org members etc.
-type LookupOption = { id: number; label: string };
+interface LookupOption {
+  id: number;
+  label: string;
+}
 
-// ---- ERD-aligned payload shape (client -> server) ----
-// NOTE: ticket_number, created_at, updated_at are NOT NULL in ERD,
-// but best practice is the BACKEND generates them.
-type CreateTicketPayload = {
-  // NOT NULL (ERD)
-  creator_user_id: number;
-  organization_id: number;
-  title: string;
-  description: string;
-  ticket_type_id: number;
-  ticket_severity_id: number;
-  business_impact_id: number;
-  ticket_status_id: number;
-  ticket_priority_id: number;
-  deadline: string; // timestamp NOT NULL (send ISO)
-  users_impacted: number;
-  is_deleted: boolean;
-
-  // NULLABLE (ERD)
-  assigned_to_user_id: number | null;
-  resolved_by_user_id: number | null;
-  sla_policy_id: number | null;
-
-  // These exist in ERD as nullable; type varies by implementation.
-  // Keep null unless your backend expects timestamps/ints.
-  sla_response_due_at: string | null;
-  sla_resolution_due_at: string | null;
-
-  // NOT NULL (ERD) but recommended server-side generation:
-  // ticket_number?: string;
-  // created_at?: string;
-  // updated_at?: string;
-};
-
-type TicketFormState = {
+interface TicketFormState {
   ticket_type_id: number;
   title: string;
   description: string;
   ticket_severity_id: number;
   business_impact_id: number;
   ticket_priority_id: number;
-  ticket_status_id: number;
-
-  deadline_date: string; // "YYYY-MM-DD" from <input type="date" />
+  deadline_date: string;
   users_impacted: number;
+}
 
-  // Optional fields from ERD
-  assigned_to_user_id: number | 'unassigned';
-  sla_policy_id: number | 'none';
-};
+// ---------------------------------------------------------------------------
+// Lookup options derived from shared constants (single source of truth)
+// ---------------------------------------------------------------------------
 
-// ---- Example lookup lists (IDs MUST match your DB tables) ----
-// Replace these IDs with real DB IDs or load them from backend.
-const TICKET_TYPES: LookupOption[] = [
-  { id: 1, label: 'Support - Technical assistance or help' },
-  { id: 2, label: 'Incident - Service outage or disruption' },
-  { id: 3, label: 'Request - Change or access request' },
-  { id: 4, label: 'Billing - Invoices, charges, payments' },
-];
+const TICKET_TYPE_OPTIONS: LookupOption[] = Object.entries(TICKET_TYPES).map(([, label], i) => ({
+  id: i + 1,
+  label,
+}));
 
-const SEVERITIES: LookupOption[] = [
-  { id: 1, label: 'Low - Minor issue' },
-  { id: 2, label: 'Medium - Notable issue' },
-  { id: 3, label: 'High - Major issue' },
-  { id: 4, label: 'Critical - System down' },
-];
+const SEVERITY_OPTIONS: LookupOption[] = Object.entries(TICKET_SEVERITIES).map(([, label], i) => ({
+  id: i + 1,
+  label,
+}));
 
-const BUSINESS_IMPACTS: LookupOption[] = [
-  { id: 1, label: 'Low - Little to no disruption' },
-  { id: 2, label: 'Moderate - Some disruption' },
-  { id: 3, label: 'High - Significant disruption' },
-  { id: 4, label: 'Severe - Business halted' },
-];
+const BUSINESS_IMPACT_OPTIONS: LookupOption[] = Object.entries(BUSINESS_IMPACTS).map(
+  ([, label], i) => ({ id: i + 1, label })
+);
 
-const PRIORITIES: LookupOption[] = [
-  { id: 1, label: 'Low' },
-  { id: 2, label: 'Medium' },
-  { id: 3, label: 'High' },
-  { id: 4, label: 'Urgent' },
-];
+const PRIORITY_OPTIONS: LookupOption[] = Object.entries(TICKET_PRIORITIES).map(([, label], i) => ({
+  id: i + 1,
+  label,
+}));
 
-const STATUSES: LookupOption[] = [
-  { id: 1, label: 'New' },
-  { id: 2, label: 'Open' },
-  { id: 3, label: 'In Progress' },
-  { id: 4, label: 'Resolved' },
-  { id: 5, label: 'Closed' },
-];
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
 
-// Optional ERD table: sla_policies
-const SLA_POLICIES: LookupOption[] = [
-  { id: 1, label: 'Standard SLA' },
-  { id: 2, label: 'Premium SLA' },
-];
-
-// Optional ERD user list for assignee (organization members)
-const ASSIGNEES: LookupOption[] = [
-  { id: 201, label: 'Support Agent 1' },
-  { id: 202, label: 'Support Agent 2' },
-  { id: 203, label: 'Support Agent 3' },
-];
-
-// Convert "YYYY-MM-DD" to ISO timestamp.
-// Using end-of-day reduces “deadline accidentally starts at midnight” confusion.
 function dateToISOEndOfDay(dateStr: string): string {
   if (!dateStr) return '';
   const [yyyy, mm, dd] = dateStr.split('-').map(Number);
@@ -127,192 +70,93 @@ function dateToISOEndOfDay(dateStr: string): string {
   return dt.toISOString();
 }
 
+const INITIAL_FORM: TicketFormState = {
+  ticket_type_id: TICKET_TYPE_OPTIONS[0]?.id ?? 1,
+  title: '',
+  description: '',
+  ticket_severity_id: SEVERITY_OPTIONS[1]?.id ?? 2,
+  business_impact_id: BUSINESS_IMPACT_OPTIONS[1]?.id ?? 2,
+  ticket_priority_id: PRIORITY_OPTIONS[1]?.id ?? 2,
+  deadline_date: '',
+  users_impacted: 1,
+};
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
 const CreateTicketPage: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { execute: createTicket } = useCreateTicket();
 
   const [activeMenu, setActiveMenu] = useState<MenuKey>('My Tickets');
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  // In a real app, get these from auth/session (JWT, /me endpoint, etc.)
-  // ERD requires creator_user_id and organization_id (NOT NULL).
-  const authContext = useMemo(
-    () => ({
-      userId: 123,
-      organizationId: 456,
-      name: 'Guest',
-      email: 'guest@giacom',
-    }),
-    []
-  );
+  const [form, setForm] = useState<TicketFormState>(INITIAL_FORM);
 
-  const [form, setForm] = useState<TicketFormState>({
-    ticket_type_id: TICKET_TYPES[0]?.id ?? 1,
-    title: '',
-    description: '',
-    ticket_severity_id: SEVERITIES[1]?.id ?? 2, // default medium
-    business_impact_id: BUSINESS_IMPACTS[1]?.id ?? 2, // default moderate
-    ticket_priority_id: PRIORITIES[1]?.id ?? 2, // default medium
-    ticket_status_id: STATUSES[0]?.id ?? 1, // default New
-    deadline_date: '',
-    users_impacted: 1,
+  const toggleSidebar = useCallback(() => {
+    setIsCollapsed((v) => !v);
+  }, []);
 
-    // Optional fields:
-    assigned_to_user_id: 'unassigned',
-    sla_policy_id: 'none',
-  });
-
-  const descriptionCount = form.description.length;
-
-  const setField = <K extends keyof TicketFormState>(key: K, value: TicketFormState[K]) =>
+  const setField = <K extends keyof TicketFormState>(key: K, value: TicketFormState[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
+  };
 
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate required ERD fields that the UI supplies
-    if (!authContext.userId) return alert('Missing creator_user_id (not logged in).');
-    if (!authContext.organizationId) return alert('Missing organization_id.');
-    if (!form.title.trim()) return alert('Title is required.');
-    if (!form.description.trim()) return alert('Description is required.');
-    if (!form.deadline_date) return alert('Deadline is required.');
+    if (!user) {
+      alert('You must be logged in to create a ticket.');
+      return;
+    }
+    if (!form.title.trim()) {
+      alert('Title is required.');
+      return;
+    }
+    if (!form.description.trim()) {
+      alert('Description is required.');
+      return;
+    }
+    if (!form.deadline_date) {
+      alert('Deadline is required.');
+      return;
+    }
     if (!Number.isFinite(form.users_impacted) || form.users_impacted < 1) {
-      return alert('Users impacted must be 1 or more.');
+      alert('Users impacted must be 1 or more.');
+      return;
     }
 
-    // ERD-aligned payload
-    const payload: CreateTicketPayload = {
-      creator_user_id: authContext.userId,
-      organization_id: authContext.organizationId,
-
-      title: form.title.trim(),
-      description: form.description.trim(),
-
-      ticket_type_id: form.ticket_type_id,
-      ticket_severity_id: form.ticket_severity_id,
-      business_impact_id: form.business_impact_id,
-      ticket_status_id: form.ticket_status_id,
-      ticket_priority_id: form.ticket_priority_id,
-
-      deadline: dateToISOEndOfDay(form.deadline_date),
-      users_impacted: form.users_impacted,
-
-      // ERD: is_deleted NOT NULL
-      is_deleted: false,
-
-      // ERD: nullable fields
-      assigned_to_user_id:
-        form.assigned_to_user_id === 'unassigned' ? null : form.assigned_to_user_id,
-      resolved_by_user_id: null,
-      sla_policy_id: form.sla_policy_id === 'none' ? null : form.sla_policy_id,
-      sla_response_due_at: null,
-      sla_resolution_due_at: null,
-    };
-
     try {
-      const res = await fetch('/api/tickets', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+      await createTicket({
+        title: form.title.trim(),
+        description: form.description.trim(),
+        ticketTypeId: form.ticket_type_id,
+        ticketSeverityId: form.ticket_severity_id,
+        businessImpactId: form.business_impact_id,
+        ticketPriorityId: form.ticket_priority_id,
+        deadline: dateToISOEndOfDay(form.deadline_date),
+        usersImpacted: form.users_impacted,
       });
 
-      if (!res.ok) {
-        const text = await res.text().catch(() => '');
-        throw new Error(text || `Request failed (${res.status})`);
-      }
-
       alert('Ticket created successfully.');
-      navigate('/customer');
+      void navigate(CLIENT_ROUTES.CUSTOMER);
     } catch (err) {
       console.error(err);
       alert(`Failed to create ticket: ${err instanceof Error ? err.message : 'Unknown error'}`);
     }
   };
 
-  const handleCancel = () => navigate('/customer');
-
   return (
     <div className={`customerPage ${isCollapsed ? 'sidebarCollapsed' : ''}`}>
-      {/* Sidebar */}
-      <aside className="sidebar">
-        <div className="brandRow">
-          <div className="brand">
-            <div className="brandTitle">{isCollapsed ? 'G' : 'GIACOM'}</div>
-            {!isCollapsed && <div className="brandSub">Customer Portal</div>}
-          </div>
+      <CustomerSidebar
+        activeMenu={activeMenu}
+        setActiveMenu={setActiveMenu}
+        isCollapsed={isCollapsed}
+        toggleSidebar={toggleSidebar}
+      />
 
-          <button
-            className="collapseBtn"
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            type="button"
-          >
-            {isCollapsed ? '➡️' : '⬅️'}
-          </button>
-        </div>
-
-        <nav className="menu">
-          <button
-            className={`menuItem ${activeMenu === 'Dashboard' ? 'active' : ''}`}
-            onClick={() => navigate('/customer')}
-            title={isCollapsed ? 'Dashboard' : undefined}
-            type="button"
-          >
-            <span className="menuIcon">🏠</span>
-            {!isCollapsed && <span className="menuLabel">Dashboard</span>}
-          </button>
-
-          <button
-            className={`menuItem ${activeMenu === 'My Tickets' ? 'active' : ''}`}
-            onClick={() => setActiveMenu('My Tickets')}
-            title={isCollapsed ? 'My Tickets' : undefined}
-            type="button"
-          >
-            <span className="menuIcon">🎫</span>
-            {!isCollapsed && <span className="menuLabel">My Tickets</span>}
-          </button>
-
-          <button
-            className={`menuItem ${activeMenu === 'Quotes' ? 'active' : ''}`}
-            onClick={() => setActiveMenu('Quotes')}
-            title={isCollapsed ? 'Quotes' : undefined}
-            type="button"
-          >
-            <span className="menuIcon">£</span>
-            {!isCollapsed && <span className="menuLabel">Quotes</span>}
-          </button>
-
-          <button
-            className={`menuItem ${activeMenu === 'History' ? 'active' : ''}`}
-            onClick={() => setActiveMenu('History')}
-            title={isCollapsed ? 'History' : undefined}
-            type="button"
-          >
-            <span className="menuIcon">🧾</span>
-            {!isCollapsed && <span className="menuLabel">History</span>}
-          </button>
-
-          <button
-            className={`menuItem ${activeMenu === 'Profile' ? 'active' : ''}`}
-            onClick={() => setActiveMenu('Profile')}
-            title={isCollapsed ? 'Profile' : undefined}
-            type="button"
-          >
-            <span className="menuIcon">👤</span>
-            {!isCollapsed && <span className="menuLabel">Profile</span>}
-          </button>
-        </nav>
-
-        <div className="sidebarFooter">
-          <div className="userAvatar">👤</div>
-          {!isCollapsed && (
-            <div className="userMeta">
-              <div className="userName">{authContext.name}</div>
-              <div className="userEmail">{authContext.email}</div>
-            </div>
-          )}
-        </div>
-      </aside>
-
-      {/* Main */}
       <main className="main">
         <header className="createTopBar">
           <div>
@@ -324,7 +168,7 @@ const CreateTicketPage: React.FC = () => {
           </div>
         </header>
 
-        <form className="formShell" onSubmit={handleSubmit}>
+        <form className="formShell" onSubmit={void handleSubmit}>
           <section className="formCard">
             <div className="formHeader">
               <div>
@@ -345,7 +189,7 @@ const CreateTicketPage: React.FC = () => {
                 value={form.ticket_type_id}
                 onChange={(e) => setField('ticket_type_id', Number(e.target.value))}
               >
-                {TICKET_TYPES.map((t) => (
+                {TICKET_TYPE_OPTIONS.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.label}
                   </option>
@@ -380,12 +224,12 @@ const CreateTicketPage: React.FC = () => {
                 required
               />
               <div className="helpRow">
-                <span className="charCount">{descriptionCount} characters</span>
+                <span className="charCount">{form.description.length} characters</span>
               </div>
             </div>
 
+            {/* Severity + Business Impact */}
             <div className="grid2">
-              {/* Severity */}
               <div className="field">
                 <label className="label">
                   Severity <span className="req">*</span>
@@ -395,7 +239,7 @@ const CreateTicketPage: React.FC = () => {
                   value={form.ticket_severity_id}
                   onChange={(e) => setField('ticket_severity_id', Number(e.target.value))}
                 >
-                  {SEVERITIES.map((s) => (
+                  {SEVERITY_OPTIONS.map((s) => (
                     <option key={s.id} value={s.id}>
                       {s.label}
                     </option>
@@ -403,7 +247,6 @@ const CreateTicketPage: React.FC = () => {
                 </select>
               </div>
 
-              {/* Business Impact */}
               <div className="field">
                 <label className="label">
                   Business Impact <span className="req">*</span>
@@ -413,7 +256,7 @@ const CreateTicketPage: React.FC = () => {
                   value={form.business_impact_id}
                   onChange={(e) => setField('business_impact_id', Number(e.target.value))}
                 >
-                  {BUSINESS_IMPACTS.map((b) => (
+                  {BUSINESS_IMPACT_OPTIONS.map((b) => (
                     <option key={b.id} value={b.id}>
                       {b.label}
                     </option>
@@ -422,46 +265,26 @@ const CreateTicketPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="grid2">
-              {/* Priority */}
-              <div className="field">
-                <label className="label">
-                  Priority <span className="req">*</span>
-                </label>
-                <select
-                  className="control"
-                  value={form.ticket_priority_id}
-                  onChange={(e) => setField('ticket_priority_id', Number(e.target.value))}
-                >
-                  {PRIORITIES.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Status */}
-              <div className="field">
-                <label className="label">
-                  Status <span className="req">*</span>
-                </label>
-                <select
-                  className="control"
-                  value={form.ticket_status_id}
-                  onChange={(e) => setField('ticket_status_id', Number(e.target.value))}
-                >
-                  {STATUSES.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            {/* Priority */}
+            <div className="field">
+              <label className="label">
+                Priority <span className="req">*</span>
+              </label>
+              <select
+                className="control"
+                value={form.ticket_priority_id}
+                onChange={(e) => setField('ticket_priority_id', Number(e.target.value))}
+              >
+                {PRIORITY_OPTIONS.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.label}
+                  </option>
+                ))}
+              </select>
             </div>
 
+            {/* Deadline + Users Impacted */}
             <div className="grid2">
-              {/* Deadline */}
               <div className="field">
                 <label className="label">
                   Deadline <span className="req">*</span>
@@ -475,7 +298,6 @@ const CreateTicketPage: React.FC = () => {
                 />
               </div>
 
-              {/* Users impacted */}
               <div className="field">
                 <label className="label">
                   Users Impacted <span className="req">*</span>
@@ -490,54 +312,17 @@ const CreateTicketPage: React.FC = () => {
                 />
               </div>
             </div>
-
-            {/* Optional ERD fields */}
-            <div className="grid2">
-              <div className="field">
-                <label className="label">Assign To</label>
-                <select
-                  className="control"
-                  value={form.assigned_to_user_id}
-                  onChange={(e) => {
-                    const v = e.target.value;
-                    setField('assigned_to_user_id', v === 'unassigned' ? 'unassigned' : Number(v));
-                  }}
-                >
-                  <option value="unassigned">Unassigned</option>
-                  {ASSIGNEES.map((u) => (
-                    <option key={u.id} value={u.id}>
-                      {u.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="field">
-                <label className="label">SLA Policy</label>
-                <select
-                  className="control"
-                  value={form.sla_policy_id}
-                  onChange={(e) => {
-                    const v = e.target.value;
-                    setField('sla_policy_id', v === 'none' ? 'none' : Number(v));
-                  }}
-                >
-                  <option value="none">None</option>
-                  {SLA_POLICIES.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
           </section>
 
           <div className="formActions">
             <button className="submitBtn" type="submit">
               💾 Submit Ticket
             </button>
-            <button className="cancelBtn" type="button" onClick={handleCancel}>
+            <button
+              className="cancelBtn"
+              type="button"
+              onClick={() => void navigate(CLIENT_ROUTES.CUSTOMER)}
+            >
               Cancel
             </button>
           </div>

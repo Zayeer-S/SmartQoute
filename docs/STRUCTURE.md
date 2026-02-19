@@ -24,9 +24,12 @@ smartquote/
 │   │   │   ├── index.ts
 │   │   │   ├── client.routes.ts
 │   │   ├── context/
-│   │   │   └── auth/
-│   │   │       ├── auth.context.types.ts
-│   │   │       └── AuthContext.ts
+│   │   │   ├── auth/
+│   │   │   │   ├── auth.context.types.ts
+│   │   │   │   └── AuthContext.ts
+│   │   │   └── theme/
+│   │   │       ├── theme.context.types.ts
+│   │   │       └── ThemeContext.ts
 │   │   ├── features/                               # Feature scoped UI behaviour composed from components and hooks
 │   │   ├── hooks/                                  # Thin adapters between UI and API layers. No business rules.
 │   │   │   ├── useLogin.ts
@@ -74,6 +77,7 @@ smartquote/
 │   │   │   │   ├── CustomerDashboard.css
 │   │   │   │   └── CustomerDashboard.tsx
 │   │   │   └── login/
+│   │   │       ├── Icons.tsx
 │   │   │       ├── LoginPage.css
 │   │   │       └── LoginPage.tsx
 │   │   └── styles/                                 # Global styling and design tokens only; no component-specific styling
