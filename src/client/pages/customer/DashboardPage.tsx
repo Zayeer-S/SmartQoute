@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useListTickets } from '../../hooks/tickets/useListTicket';
-import { useAuth } from '../../hooks/auth/useAuth';
+import { useAuth } from '../../hooks/contexts/useAuth';
 import { CLIENT_ROUTES } from '../../constants/client.routes';
 import StatsOverview from '../../features/dashboard/StatsOverview';
 import TicketStatusChart from '../../features/dashboard/TicketStatusChart';

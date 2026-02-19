@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/auth/useAuth';
+import { useAuth } from '../../hooks/contexts/useAuth';
 import { CLIENT_ROUTES } from '../../constants/client.routes';
 
 const CustomerLayout: React.FC = () => {
