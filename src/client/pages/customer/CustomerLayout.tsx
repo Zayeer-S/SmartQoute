@@ -2,6 +2,7 @@ import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/contexts/useAuth';
 import { CLIENT_ROUTES } from '../../constants/client.routes';
+import './CustomerLayout.css';
 
 const CustomerLayout: React.FC = () => {
   const { user, logout } = useAuth();
@@ -17,47 +18,79 @@ const CustomerLayout: React.FC = () => {
     : '';
 
   return (
-    <div data-testid="customer-layout">
-      <nav aria-label="Customer navigation">
-        <span>Smartquote</span>
+    <div className="customer-layout" data-testid="customer-layout">
+      <nav className="customer-sidebar" aria-label="Customer navigation">
+        <div className="customer-sidebar-brand">
+          <span className="customer-sidebar-logo">Smartquote</span>
+        </div>
 
-        <ul role="list">
+        <ul className="customer-sidebar-nav" role="list">
           <li>
-            <NavLink to={CLIENT_ROUTES.CUSTOMER.ROOT} end data-testid="nav-dashboard">
+            <NavLink
+              to={CLIENT_ROUTES.CUSTOMER.ROOT}
+              end
+              className={({ isActive }) =>
+                ['customer-sidebar-link', isActive ? 'active' : ''].filter(Boolean).join(' ')
+              }
+              data-testid="nav-dashboard"
+            >
               Dashboard
             </NavLink>
           </li>
           <li>
-            <NavLink to={CLIENT_ROUTES.CUSTOMER.TICKETS} data-testid="nav-tickets">
+            <NavLink
+              to={CLIENT_ROUTES.CUSTOMER.TICKETS}
+              className={({ isActive }) =>
+                ['customer-sidebar-link', isActive ? 'active' : ''].filter(Boolean).join(' ')
+              }
+              data-testid="nav-tickets"
+            >
               My Tickets
             </NavLink>
           </li>
           <li>
-            <NavLink to={CLIENT_ROUTES.CUSTOMER.NEW_TICKET} data-testid="nav-new-ticket">
+            <NavLink
+              to={CLIENT_ROUTES.CUSTOMER.NEW_TICKET}
+              className={({ isActive }) =>
+                ['customer-sidebar-link', isActive ? 'active' : ''].filter(Boolean).join(' ')
+              }
+              data-testid="nav-new-ticket"
+            >
               Submit Ticket
             </NavLink>
           </li>
           <li>
-            <NavLink to={CLIENT_ROUTES.CUSTOMER.SETTINGS} data-testid="nav-settings">
+            <NavLink
+              to={CLIENT_ROUTES.CUSTOMER.SETTINGS}
+              className={({ isActive }) =>
+                ['customer-sidebar-link', isActive ? 'active' : ''].filter(Boolean).join(' ')
+              }
+              data-testid="nav-settings"
+            >
               Settings
             </NavLink>
           </li>
         </ul>
 
-        <div>
+        <div className="customer-sidebar-footer">
           {user && (
-            <div data-testid="sidebar-user">
-              <span>{fullName}</span>
-              <span>{user.role.name}</span>
+            <div className="customer-sidebar-user" data-testid="sidebar-user">
+              <span className="customer-sidebar-user-name">{fullName}</span>
+              <span className="customer-sidebar-user-role">{user.role.name}</span>
             </div>
           )}
-          <button type="button" onClick={() => void handleLogout()} data-testid="logout-btn">
+          <button
+            type="button"
+            className="customer-sidebar-logout"
+            onClick={() => void handleLogout()}
+            data-testid="logout-btn"
+          >
             Sign out
           </button>
         </div>
       </nav>
 
-      <main data-testid="customer-main">
+      <main className="customer-main" data-testid="customer-main">
         <Outlet />
       </main>
     </div>

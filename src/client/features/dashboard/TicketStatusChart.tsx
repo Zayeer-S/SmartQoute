@@ -33,18 +33,19 @@ const TicketStatusChart: React.FC<TicketStatusChartProps> = ({ tickets }) => {
 
   return (
     <div aria-label="Ticket status breakdown chart" data-testid="ticket-status-chart">
-      <ResponsiveContainer width={180} height={180}>
+      <ResponsiveContainer width={160} height={160}>
         <PieChart>
           <Pie
             data={chartData}
             cx="50%"
             cy="50%"
-            innerRadius={52}
-            outerRadius={80}
+            innerRadius={46}
+            outerRadius={72}
             dataKey="value"
             strokeWidth={2}
           >
             {chartData.map((entry) => (
+              // eslint-disable-next-line @typescript-eslint/no-deprecated
               <Cell key={entry.name} fill={STATUS_COLORS[entry.name] ?? FALLBACK_COLOR} />
             ))}
           </Pie>

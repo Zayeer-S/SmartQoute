@@ -1,4 +1,5 @@
 import React from 'react';
+import './TicketPagination.css';
 
 interface TicketPaginationProps {
   page: number;
@@ -10,9 +11,14 @@ const TicketPagination: React.FC<TicketPaginationProps> = ({ page, totalPages, o
   if (totalPages <= 1) return null;
 
   return (
-    <nav aria-label="Ticket list pagination" data-testid="ticket-pagination">
+    <nav
+      className="ticket-pagination"
+      aria-label="Ticket list pagination"
+      data-testid="ticket-pagination"
+    >
       <button
         type="button"
+        className="btn btn-secondary btn-sm"
         onClick={() => {
           onPageChange(page - 1);
         }}
@@ -20,15 +26,16 @@ const TicketPagination: React.FC<TicketPaginationProps> = ({ page, totalPages, o
         aria-label="Previous page"
         data-testid="pagination-prev"
       >
-        Previous
+        ← Previous
       </button>
 
-      <span aria-current="page" data-testid="pagination-label">
+      <span className="ticket-pagination-label" aria-current="page" data-testid="pagination-label">
         Page {page} of {totalPages}
       </span>
 
       <button
         type="button"
+        className="btn btn-secondary btn-sm"
         onClick={() => {
           onPageChange(page + 1);
         }}
@@ -36,7 +43,7 @@ const TicketPagination: React.FC<TicketPaginationProps> = ({ page, totalPages, o
         aria-label="Next page"
         data-testid="pagination-next"
       >
-        Next
+        Next →
       </button>
     </nav>
   );

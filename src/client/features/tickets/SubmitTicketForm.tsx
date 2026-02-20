@@ -8,6 +8,7 @@ import {
   LOOKUP_IDS,
 } from '../../../shared/constants/lookup-values';
 import type { CreateTicketRequest } from '../../../shared/contracts/ticket-contracts';
+import './SubmitTicketForm.css';
 
 interface SubmitTicketFormProps {
   onSuccess: () => void;
@@ -107,17 +108,21 @@ const SubmitTicketForm: React.FC<SubmitTicketFormProps> = ({ onSuccess }) => {
 
   return (
     <form
+      className="submit-ticket-form"
       onSubmit={(e) => void handleSubmit(e)}
       noValidate
       aria-label="Submit ticket form"
       data-testid="submit-ticket-form"
     >
-      <div>
-        <label htmlFor="title">Title</label>
+      <div className="field-group">
+        <label className="field-label" htmlFor="title">
+          Title
+        </label>
         <input
           id="title"
           name="title"
           type="text"
+          className="field-input"
           value={form.title}
           onChange={handleChange}
           placeholder="Brief summary of the issue"
@@ -128,11 +133,14 @@ const SubmitTicketForm: React.FC<SubmitTicketFormProps> = ({ onSuccess }) => {
         />
       </div>
 
-      <div>
-        <label htmlFor="description">Description</label>
+      <div className="field-group">
+        <label className="field-label" htmlFor="description">
+          Description
+        </label>
         <textarea
           id="description"
           name="description"
+          className="field-textarea"
           value={form.description}
           onChange={handleChange}
           placeholder="Detailed explanation of the issue or request"
@@ -144,124 +152,152 @@ const SubmitTicketForm: React.FC<SubmitTicketFormProps> = ({ onSuccess }) => {
         />
       </div>
 
-      <div>
-        <label htmlFor="ticketTypeId">Ticket Type</label>
-        <select
-          id="ticketTypeId"
-          name="ticketTypeId"
-          value={form.ticketTypeId}
-          onChange={handleSelectNumber}
-          required
-          disabled={loading}
-          data-testid="field-ticket-type"
-        >
-          {TICKET_TYPE_OPTIONS.map((opt) => (
-            <option key={opt.id} value={opt.id}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      </div>
+      <div className="submit-ticket-form-grid">
+        <div className="field-group">
+          <label className="field-label" htmlFor="ticketTypeId">
+            Ticket Type
+          </label>
+          <select
+            id="ticketTypeId"
+            name="ticketTypeId"
+            className="field-select"
+            value={form.ticketTypeId}
+            onChange={handleSelectNumber}
+            required
+            disabled={loading}
+            data-testid="field-ticket-type"
+          >
+            {TICKET_TYPE_OPTIONS.map((opt) => (
+              <option key={opt.id} value={opt.id}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      <div>
-        <label htmlFor="ticketSeverityId">Severity</label>
-        <select
-          id="ticketSeverityId"
-          name="ticketSeverityId"
-          value={form.ticketSeverityId}
-          onChange={handleSelectNumber}
-          required
-          disabled={loading}
-          data-testid="field-severity"
-        >
-          {TICKET_SEVERITY_OPTIONS.map((opt) => (
-            <option key={opt.id} value={opt.id}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      </div>
+        <div className="field-group">
+          <label className="field-label" htmlFor="ticketSeverityId">
+            Severity
+          </label>
+          <select
+            id="ticketSeverityId"
+            name="ticketSeverityId"
+            className="field-select"
+            value={form.ticketSeverityId}
+            onChange={handleSelectNumber}
+            required
+            disabled={loading}
+            data-testid="field-severity"
+          >
+            {TICKET_SEVERITY_OPTIONS.map((opt) => (
+              <option key={opt.id} value={opt.id}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      <div>
-        <label htmlFor="businessImpactId">Business Impact</label>
-        <select
-          id="businessImpactId"
-          name="businessImpactId"
-          value={form.businessImpactId}
-          onChange={handleSelectNumber}
-          required
-          disabled={loading}
-          data-testid="field-business-impact"
-        >
-          {BUSINESS_IMPACT_OPTIONS.map((opt) => (
-            <option key={opt.id} value={opt.id}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      </div>
+        <div className="field-group">
+          <label className="field-label" htmlFor="businessImpactId">
+            Business Impact
+          </label>
+          <select
+            id="businessImpactId"
+            name="businessImpactId"
+            className="field-select"
+            value={form.businessImpactId}
+            onChange={handleSelectNumber}
+            required
+            disabled={loading}
+            data-testid="field-business-impact"
+          >
+            {BUSINESS_IMPACT_OPTIONS.map((opt) => (
+              <option key={opt.id} value={opt.id}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      <div>
-        <label htmlFor="ticketPriorityId">Priority</label>
-        <select
-          id="ticketPriorityId"
-          name="ticketPriorityId"
-          value={form.ticketPriorityId}
-          onChange={handleSelectNumber}
-          required
-          disabled={loading}
-          data-testid="field-priority"
-        >
-          {TICKET_PRIORITY_OPTIONS.map((opt) => (
-            <option key={opt.id} value={opt.id}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      </div>
+        <div className="field-group">
+          <label className="field-label" htmlFor="ticketPriorityId">
+            Priority
+          </label>
+          <select
+            id="ticketPriorityId"
+            name="ticketPriorityId"
+            className="field-select"
+            value={form.ticketPriorityId}
+            onChange={handleSelectNumber}
+            required
+            disabled={loading}
+            data-testid="field-priority"
+          >
+            {TICKET_PRIORITY_OPTIONS.map((opt) => (
+              <option key={opt.id} value={opt.id}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      <div>
-        <label htmlFor="deadline">Deadline</label>
-        <input
-          id="deadline"
-          name="deadline"
-          type="date"
-          value={form.deadline}
-          onChange={handleChange}
-          min={today}
-          required
-          disabled={loading}
-          aria-required="true"
-          data-testid="field-deadline"
-        />
-      </div>
+        <div className="field-group">
+          <label className="field-label" htmlFor="deadline">
+            Deadline
+          </label>
+          <input
+            id="deadline"
+            name="deadline"
+            type="date"
+            className="field-input"
+            value={form.deadline}
+            onChange={handleChange}
+            min={today}
+            required
+            disabled={loading}
+            aria-required="true"
+            data-testid="field-deadline"
+          />
+        </div>
 
-      <div>
-        <label htmlFor="usersImpacted">Users Impacted</label>
-        <input
-          id="usersImpacted"
-          name="usersImpacted"
-          type="number"
-          min={0}
-          value={form.usersImpacted}
-          onChange={handleChange}
-          placeholder="Number of users affected"
-          required
-          disabled={loading}
-          aria-required="true"
-          data-testid="field-users-impacted"
-        />
+        <div className="field-group">
+          <label className="field-label" htmlFor="usersImpacted">
+            Users Impacted
+          </label>
+          <input
+            id="usersImpacted"
+            name="usersImpacted"
+            type="number"
+            className="field-input"
+            min={0}
+            value={form.usersImpacted}
+            onChange={handleChange}
+            placeholder="Number of users affected"
+            required
+            disabled={loading}
+            aria-required="true"
+            data-testid="field-users-impacted"
+          />
+        </div>
       </div>
 
       {error && (
-        <p role="alert" data-testid="submit-error">
+        <p className="feedback-error" role="alert" data-testid="submit-error">
           {error}
         </p>
       )}
 
-      <button type="submit" disabled={loading} aria-busy={loading} data-testid="submit-ticket-btn">
-        {loading ? 'Submitting...' : 'Submit Ticket'}
-      </button>
+      <div className="submit-ticket-form-actions">
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={loading}
+          aria-busy={loading}
+          data-testid="submit-ticket-btn"
+        >
+          {loading ? 'Submitting...' : 'Submit Ticket'}
+        </button>
+      </div>
     </form>
   );
 };

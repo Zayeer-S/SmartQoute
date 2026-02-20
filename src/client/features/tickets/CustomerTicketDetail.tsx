@@ -1,20 +1,22 @@
 import React, { useEffect } from 'react';
 import { useGetTicket } from '../../hooks/tickets/useGetTicket';
 import { useListQuotes } from '../../hooks/quotes/useListQuote';
+import { getStatusBadgeClass, getPriorityBadgeClass } from '../../lib/utils/badge-utils';
 import QuotePanel from './QuotePanel';
+import TicketTimeline from './TicketTimeline';
+import './CustomerTicketDetail.css';
 
-interface TicketDetailProps {
+interface CustomerTicketDetailProps {
   ticketId: string;
 }
 
-const TicketDetail: React.FC<TicketDetailProps> = ({ ticketId }) => {
+const CustomerTicketDetail: React.FC<CustomerTicketDetailProps> = ({ ticketId }) => {
   const ticket = useGetTicket();
   const quotes = useListQuotes();
 
   useEffect(() => {
     void ticket.execute(ticketId);
     void quotes.execute(ticketId);
-    // You add remaining deps, you cause cascade
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ticketId]);
 
@@ -22,19 +24,27 @@ const TicketDetail: React.FC<TicketDetailProps> = ({ ticketId }) => {
   const error = ticket.error ?? quotes.error;
 
   if (isLoading) {
-    return <p data-testid="ticket-detail-loading">Loading ticket...</p>;
+    return (
+      <p className="loading-text" data-testid="ticket-detail-loading">
+        Loading ticket...
+      </p>
+    );
   }
 
   if (error) {
     return (
-      <p role="alert" data-testid="ticket-detail-error">
+      <p className="feedback-error" role="alert" data-testid="ticket-detail-error">
         {error}
       </p>
     );
   }
 
   if (!ticket.data) {
-    return <p data-testid="ticket-detail-not-found">Ticket not found.</p>;
+    return (
+      <p className="loading-text" data-testid="ticket-detail-not-found">
+        Ticket not found.
+      </p>
+    );
   }
 
   const t = ticket.data;
@@ -57,21 +67,39 @@ const TicketDetail: React.FC<TicketDetailProps> = ({ ticketId }) => {
       : null;
 
   return (
-    <div data-testid="ticket-detail">
-      <div>
-        <h1 data-testid="ticket-title">{t.title}</h1>
+    <div className="ticket-detail" data-testid="ticket-detail">
+      <div className="ticket-detail-header">
         <div>
-          <span data-testid="ticket-status">{t.ticketStatusName}</span>
-          <span data-testid="ticket-priority">{t.ticketPriorityName}</span>
+          <h1 className="ticket-detail-title" data-testid="ticket-title">
+            {t.title}
+          </h1>
+          <div className="ticket-detail-badges">
+            <span className={getStatusBadgeClass(t.ticketStatusName)} data-testid="ticket-status">
+              {t.ticketStatusName}
+            </span>
+            <span
+              className={getPriorityBadgeClass(t.ticketPriorityName)}
+              data-testid="ticket-priority"
+            >
+              {t.ticketPriorityName}
+            </span>
+          </div>
         </div>
       </div>
 
-      <section aria-labelledby="ticket-info-heading">
-        <h2 id="ticket-info-heading">Details</h2>
+      <section
+        className="card card-padded ticket-detail-section"
+        aria-labelledby="ticket-info-heading"
+      >
+        <h2 className="ticket-detail-section-title" id="ticket-info-heading">
+          Details
+        </h2>
 
-        <p data-testid="ticket-description">{t.description}</p>
+        <p className="ticket-detail-description" data-testid="ticket-description">
+          {t.description}
+        </p>
 
-        <dl>
+        <dl className="ticket-detail-dl">
           <div>
             <dt>Type</dt>
             <dd data-testid="ticket-type">{t.ticketTypeName}</dd>
@@ -103,16 +131,22 @@ const TicketDetail: React.FC<TicketDetailProps> = ({ ticketId }) => {
         </dl>
       </section>
 
-      <section aria-labelledby="quote-section-heading">
-        <h2 id="quote-section-heading">Quote</h2>
+      <section className="ticket-detail-section" aria-labelledby="quote-section-heading">
+        <h2 className="ticket-detail-section-title" id="quote-section-heading">
+          Quote
+        </h2>
         {latestQuote ? (
           <QuotePanel ticketId={ticketId} quote={latestQuote} />
         ) : (
-          <p data-testid="no-quote">No quote has been generated yet.</p>
+          <p className="empty-state-message" data-testid="no-quote">
+            No quote has been generated yet.
+          </p>
         )}
       </section>
+
+      <TicketTimeline ticketId={ticketId} />
     </div>
   );
 };
 
-export default TicketDetail;
+export default CustomerTicketDetail;

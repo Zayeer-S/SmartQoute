@@ -1,6 +1,7 @@
 import React from 'react';
 import { TICKET_STATUSES, TICKET_TYPES } from '../../../shared/constants/lookup-values';
 import type { StatusFilter, TypeFilter } from '../../hooks/useTicketFilters';
+import './TicketFilters.css';
 
 const STATUS_OPTIONS = Object.values(TICKET_STATUSES);
 const TYPE_OPTIONS = Object.values(TICKET_TYPES);
@@ -27,9 +28,15 @@ const TicketFilters: React.FC<TicketFiltersProps> = ({
   const hasActiveFilters = search !== '' || statusFilter !== '' || typeFilter !== '';
 
   return (
-    <div role="search" aria-label="Filter tickets" data-testid="ticket-filters">
+    <div
+      className="ticket-filters"
+      role="search"
+      aria-label="Filter tickets"
+      data-testid="ticket-filters"
+    >
       <input
         type="search"
+        className="field-input ticket-filters-search"
         value={search}
         onChange={(e) => {
           onSearchChange(e.target.value);
@@ -40,6 +47,7 @@ const TicketFilters: React.FC<TicketFiltersProps> = ({
       />
 
       <select
+        className="field-select ticket-filters-select"
         value={statusFilter}
         onChange={(e) => {
           onStatusChange(e.target.value as StatusFilter);
@@ -56,6 +64,7 @@ const TicketFilters: React.FC<TicketFiltersProps> = ({
       </select>
 
       <select
+        className="field-select ticket-filters-select"
         value={typeFilter}
         onChange={(e) => {
           onTypeChange(e.target.value as TypeFilter);
@@ -72,8 +81,13 @@ const TicketFilters: React.FC<TicketFiltersProps> = ({
       </select>
 
       {hasActiveFilters && (
-        <button type="button" onClick={onClear} data-testid="filter-clear">
-          Clear filters
+        <button
+          type="button"
+          className="btn btn-ghost btn-sm"
+          onClick={onClear}
+          data-testid="filter-clear"
+        >
+          Clear
         </button>
       )}
     </div>

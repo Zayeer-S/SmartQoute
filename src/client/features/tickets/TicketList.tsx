@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 import { useListTickets } from '../../hooks/tickets/useListTicket';
 import { CLIENT_ROUTES } from '../../constants/client.routes';
 import { useTicketFilters } from '../../hooks/useTicketFilters';
-import TicketCard from './CustomerTicketCard';
+import CustomerTicketCard from './CustomerTicketCard';
 import TicketFilters from './TicketFilters';
 import TicketPagination from './TicketPagination';
+import './TicketList.css';
 
 const TicketList: React.FC = () => {
   const { execute, data, loading, error } = useListTickets();
@@ -32,12 +33,16 @@ const TicketList: React.FC = () => {
   } = useTicketFilters(allTickets);
 
   if (loading) {
-    return <p data-testid="tickets-loading">Loading tickets...</p>;
+    return (
+      <p className="loading-text" data-testid="tickets-loading">
+        Loading tickets...
+      </p>
+    );
   }
 
   if (error) {
     return (
-      <p role="alert" data-testid="tickets-error">
+      <p className="feedback-error" role="alert" data-testid="tickets-error">
         {error}
       </p>
     );
@@ -45,9 +50,11 @@ const TicketList: React.FC = () => {
 
   if (allTickets.length === 0) {
     return (
-      <div data-testid="tickets-empty">
-        <p>You have no tickets yet.</p>
-        <Link to={CLIENT_ROUTES.CUSTOMER.NEW_TICKET}>Submit your first ticket</Link>
+      <div className="empty-state" data-testid="tickets-empty">
+        <p className="empty-state-message">You have no tickets yet.</p>
+        <Link className="btn btn-primary btn-sm" to={CLIENT_ROUTES.CUSTOMER.NEW_TICKET}>
+          Submit your first ticket
+        </Link>
       </div>
     );
   }
@@ -65,12 +72,14 @@ const TicketList: React.FC = () => {
       />
 
       {filteredTickets.length === 0 ? (
-        <p data-testid="tickets-no-results">No tickets match your filters.</p>
+        <p className="ticket-list-no-results" data-testid="tickets-no-results">
+          No tickets match your filters.
+        </p>
       ) : (
-        <ul role="list" data-testid="ticket-list">
+        <ul className="ticket-list" role="list" data-testid="ticket-list">
           {filteredTickets.map((ticket) => (
             <li key={ticket.id}>
-              <TicketCard ticket={ticket} />
+              <CustomerTicketCard ticket={ticket} />
             </li>
           ))}
         </ul>

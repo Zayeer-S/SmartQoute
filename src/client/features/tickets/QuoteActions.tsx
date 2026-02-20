@@ -3,11 +3,11 @@ import { useApproveQuote } from '../../hooks/quotes/useApproveQuote';
 import { useRejectQuote } from '../../hooks/quotes/useRejectQuote';
 import { QUOTE_APPROVAL_STATUSES } from '../../../shared/constants/lookup-values';
 import type { QuoteApprovalStatus } from '../../../shared/constants/lookup-values';
+import './QuoteActions.css';
 
 interface QuoteActionsProps {
   ticketId: string;
   quoteId: string;
-  /** TODO Stub for now until endpoint returns approval statuses. When provided, disables actions if alreaady approved or rejected */
   approvalStatus?: QuoteApprovalStatus | null;
 }
 
@@ -25,7 +25,6 @@ const QuoteActions: React.FC<QuoteActionsProps> = ({ ticketId, quoteId, approval
 
   const isSettled = approvalStatus != null && SETTLED_STATUSES.includes(approvalStatus);
   const isBusy = approve.loading || reject.loading;
-
   const rejectSucceeded = reject.data !== null;
 
   const handleApprove = (): void => {
@@ -49,59 +48,78 @@ const QuoteActions: React.FC<QuoteActionsProps> = ({ ticketId, quoteId, approval
 
   if (isSettled) {
     return (
-      <p data-testid="quote-actions-settled">
+      <p className="quote-actions-settled" data-testid="quote-actions-settled">
         This quote has already been {approvalStatus.toLowerCase()}.
       </p>
     );
   }
 
   if (approve.data) {
-    return <p data-testid="approve-success">Quote accepted successfully.</p>;
+    return (
+      <p className="feedback-success" data-testid="approve-success">
+        Quote accepted successfully.
+      </p>
+    );
   }
 
   if (rejectSucceeded) {
-    return <p data-testid="reject-success">Quote rejected successfully.</p>;
+    return (
+      <p className="feedback-success" data-testid="reject-success">
+        Quote rejected successfully.
+      </p>
+    );
   }
 
   return (
-    <div data-testid="quote-actions">
+    <div className="quote-actions" data-testid="quote-actions">
       {approve.error && (
-        <p role="alert" data-testid="approve-error">
+        <p className="feedback-error" role="alert" data-testid="approve-error">
           {approve.error}
         </p>
       )}
       {reject.error && (
-        <p role="alert" data-testid="reject-error">
+        <p className="feedback-error" role="alert" data-testid="reject-error">
           {reject.error}
         </p>
       )}
 
-      <button
-        type="button"
-        onClick={handleApprove}
-        disabled={isBusy || showRejectForm}
-        aria-busy={approve.loading}
-        data-testid="approve-btn"
-      >
-        {approve.loading ? 'Accepting...' : 'Accept Quote'}
-      </button>
-
-      {!showRejectForm ? (
+      <div className="quote-actions-buttons">
         <button
           type="button"
-          onClick={handleOpenRejectForm}
-          disabled={isBusy}
-          data-testid="open-reject-btn"
+          className="btn btn-primary"
+          onClick={handleApprove}
+          disabled={isBusy || showRejectForm}
+          aria-busy={approve.loading}
+          data-testid="approve-btn"
         >
-          Reject Quote
+          {approve.loading ? 'Accepting...' : 'Accept Quote'}
         </button>
-      ) : (
-        <form onSubmit={handleRejectSubmit} data-testid="reject-form">
-          <label htmlFor="reject-comment">
+
+        {!showRejectForm && (
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={handleOpenRejectForm}
+            disabled={isBusy}
+            data-testid="open-reject-btn"
+          >
+            Reject Quote
+          </button>
+        )}
+      </div>
+
+      {showRejectForm && (
+        <form
+          className="quote-actions-reject-form"
+          onSubmit={handleRejectSubmit}
+          data-testid="reject-form"
+        >
+          <label className="quote-actions-reject-form-label" htmlFor="reject-comment">
             Reason for rejection <span aria-hidden="true">*</span>
           </label>
           <textarea
             id="reject-comment"
+            className="field-textarea"
             value={rejectComment}
             onChange={(e) => {
               setRejectComment(e.target.value);
@@ -113,22 +131,26 @@ const QuoteActions: React.FC<QuoteActionsProps> = ({ ticketId, quoteId, approval
             aria-required="true"
             data-testid="reject-comment-input"
           />
-          <button
-            type="submit"
-            disabled={isBusy || !rejectComment.trim()}
-            aria-busy={reject.loading}
-            data-testid="confirm-reject-btn"
-          >
-            {reject.loading ? 'Rejecting...' : 'Confirm Rejection'}
-          </button>
-          <button
-            type="button"
-            onClick={handleCancelReject}
-            disabled={isBusy}
-            data-testid="cancel-reject-btn"
-          >
-            Cancel
-          </button>
+          <div className="quote-actions-reject-form-actions">
+            <button
+              type="submit"
+              className="btn btn-danger"
+              disabled={isBusy || !rejectComment.trim()}
+              aria-busy={reject.loading}
+              data-testid="confirm-reject-btn"
+            >
+              {reject.loading ? 'Rejecting...' : 'Confirm Rejection'}
+            </button>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={handleCancelReject}
+              disabled={isBusy}
+              data-testid="cancel-reject-btn"
+            >
+              Cancel
+            </button>
+          </div>
         </form>
       )}
     </div>
