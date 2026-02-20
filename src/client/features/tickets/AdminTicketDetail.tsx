@@ -5,7 +5,7 @@ import { useResolveTicket } from '../../hooks/tickets/useResolveTicket';
 import { useTicketPermissions } from '../../hooks/auth/useTicketPermissions';
 import { getStatusBadgeClass, getPriorityBadgeClass } from '../../lib/utils/badge-utils';
 import AssignTicketForm from './AssignTicketForm';
-import QuotePanel from './QuotePanel';
+import AdminQuotePanel from './AdminQuotePanel';
 import CommentThread from './CommentThread';
 import './AdminTicketDetail.css';
 
@@ -80,11 +80,6 @@ const AdminTicketDetail: React.FC<AdminTicketDetailProps> = ({ ticketId }) => {
     month: 'long',
     year: 'numeric',
   });
-
-  const latestQuote =
-    quotes.data && quotes.data.quotes.length > 0
-      ? quotes.data.quotes.reduce((a, b) => (a.version > b.version ? a : b))
-      : null;
 
   const isResolved = t.ticketStatusName === 'Resolved' || t.ticketStatusName === 'Closed';
 
@@ -221,21 +216,14 @@ const AdminTicketDetail: React.FC<AdminTicketDetailProps> = ({ ticketId }) => {
         </section>
       )}
 
-      {/* ── Quote ── */}
       <section className="admin-detail-section" aria-labelledby="quote-section-heading">
-        <h2 className="admin-detail-section-heading" id="quote-section-heading">
-          Quote
-        </h2>
-        {latestQuote ? (
-          <QuotePanel ticketId={ticketId} quote={latestQuote} />
-        ) : (
-          <p className="loading-text" data-testid="no-quote">
-            No quote has been generated yet.
-          </p>
-        )}
+        <AdminQuotePanel
+          ticketId={ticketId}
+          quotes={quotes.data?.quotes ?? []}
+          onQuoteMutated={loadTicket}
+        />
       </section>
 
-      {/* ── Comments ── */}
       <section className="admin-detail-section">
         <CommentThread ticketId={ticketId} />
       </section>

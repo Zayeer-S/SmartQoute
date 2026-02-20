@@ -5,13 +5,152 @@ import { useUpdateQuote } from '../../hooks/quotes/useUpdateQuote';
 import { useSubmitForApproval } from '../../hooks/quotes/useSubmitForApproval';
 import { useGetRevisionHistory } from '../../hooks/quotes/useGetRevisionHistory';
 import { useQuotePermissions } from '../../hooks/auth/useQuotePermissions';
-import QuotePanel from './QuotePanel';
 import {
   LOOKUP_IDS,
   QUOTE_EFFORT_LEVELS,
   QUOTE_CONFIDENCE_LEVELS,
+  QUOTE_CREATORS,
+  TICKET_PRIORITIES,
+  QUOTE_APPROVAL_STATUSES,
 } from '../../../shared/constants/lookup-values';
 import type { QuoteResponse } from '../../../shared/contracts/quote-contracts';
+
+const EFFORT_LABEL: Record<number, string> = {
+  [LOOKUP_IDS.QUOTE_EFFORT_LEVEL.LOW]: QUOTE_EFFORT_LEVELS.LOW,
+  [LOOKUP_IDS.QUOTE_EFFORT_LEVEL.MEDIUM]: QUOTE_EFFORT_LEVELS.MEDIUM,
+  [LOOKUP_IDS.QUOTE_EFFORT_LEVEL.HIGH]: QUOTE_EFFORT_LEVELS.HIGH,
+};
+
+const CONFIDENCE_LABEL: Record<number, string> = {
+  [LOOKUP_IDS.QUOTE_CONFIDENCE_LEVEL.LOW]: QUOTE_CONFIDENCE_LEVELS.LOW,
+  [LOOKUP_IDS.QUOTE_CONFIDENCE_LEVEL.MEDIUM]: QUOTE_CONFIDENCE_LEVELS.MEDIUM,
+  [LOOKUP_IDS.QUOTE_CONFIDENCE_LEVEL.HIGH]: QUOTE_CONFIDENCE_LEVELS.HIGH,
+};
+
+const CREATOR_LABEL: Record<number, string> = {
+  [LOOKUP_IDS.QUOTE_CREATOR.MANUAL]: QUOTE_CREATORS.MANUAL,
+  [LOOKUP_IDS.QUOTE_CREATOR.AUTOMATED]: QUOTE_CREATORS.AUTOMATED,
+};
+
+const PRIORITY_LABEL: Record<number, string> = {
+  [LOOKUP_IDS.TICKET_PRIORITY.P1]: TICKET_PRIORITIES.P1,
+  [LOOKUP_IDS.TICKET_PRIORITY.P2]: TICKET_PRIORITIES.P2,
+  [LOOKUP_IDS.TICKET_PRIORITY.P3]: TICKET_PRIORITIES.P3,
+  [LOOKUP_IDS.TICKET_PRIORITY.P4]: TICKET_PRIORITIES.P4,
+};
+
+const APPROVAL_STATUS_LABEL: Record<number, string> = {
+  [LOOKUP_IDS.QUOTE_APPROVAL_STATUS.PENDING]: QUOTE_APPROVAL_STATUSES.PENDING,
+  [LOOKUP_IDS.QUOTE_APPROVAL_STATUS.APPROVED]: QUOTE_APPROVAL_STATUSES.APPROVED,
+  [LOOKUP_IDS.QUOTE_APPROVAL_STATUS.REJECTED]: QUOTE_APPROVAL_STATUSES.REJECTED,
+};
+
+const APPROVAL_STATUS_BADGE: Record<number, string> = {
+  [LOOKUP_IDS.QUOTE_APPROVAL_STATUS.PENDING]: 'badge badge-in-progress',
+  [LOOKUP_IDS.QUOTE_APPROVAL_STATUS.APPROVED]: 'badge badge-resolved',
+  [LOOKUP_IDS.QUOTE_APPROVAL_STATUS.REJECTED]: 'badge badge-cancelled',
+};
+
+const fmt = {
+  currency: (n: number) =>
+    new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(n),
+  date: (s: string) =>
+    new Date(s).toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }),
+};
+
+/* ─── Inline admin quote display — shows every field ─── */
+
+const AdminQuoteDisplay: React.FC<{ quote: QuoteResponse }> = ({ quote }) => (
+  <div className="admin-quote-display" data-testid="admin-quote-display">
+    <div className="admin-quote-display-header">
+      <span className="admin-quote-version-badge">v{quote.version}</span>
+      <span className={APPROVAL_STATUS_BADGE[quote.quoteApprovalId ?? 0] ?? 'badge badge-neutral'}>
+        {quote.quoteApprovalId != null
+          ? (APPROVAL_STATUS_LABEL[quote.quoteApprovalId] ?? 'Unknown')
+          : 'Not Submitted'}
+      </span>
+      <span className="badge badge-neutral">
+        {CREATOR_LABEL[quote.quoteCreatorId] ?? 'Unknown'}
+      </span>
+    </div>
+
+    <dl className="admin-detail-dl">
+      {/* ── Costs ── */}
+      <div className="admin-detail-dl-row">
+        <dt>Estimated Cost</dt>
+        <dd data-testid="quote-estimated-cost">{fmt.currency(quote.estimatedCost)}</dd>
+      </div>
+      <div className="admin-detail-dl-row">
+        <dt>Fixed Cost</dt>
+        <dd data-testid="quote-fixed-cost">{fmt.currency(quote.fixedCost)}</dd>
+      </div>
+      <div className="admin-detail-dl-row">
+        <dt>Final Cost</dt>
+        <dd data-testid="quote-final-cost">
+          {quote.finalCost != null ? (
+            fmt.currency(quote.finalCost)
+          ) : (
+            <em className="admin-detail-unassigned">Not set</em>
+          )}
+        </dd>
+      </div>
+
+      {/* ── Hours & time ── */}
+      <div className="admin-detail-dl-row">
+        <dt>Estimated Hours</dt>
+        <dd data-testid="quote-hours">
+          {quote.estimatedHoursMinimum}–{quote.estimatedHoursMaximum} hrs
+        </dd>
+      </div>
+      <div className="admin-detail-dl-row">
+        <dt>Est. Resolution Time</dt>
+        <dd data-testid="quote-resolution-time">{quote.estimatedResolutionTime} days</dd>
+      </div>
+      <div className="admin-detail-dl-row">
+        <dt>Hourly Rate</dt>
+        <dd data-testid="quote-hourly-rate">{fmt.currency(quote.hourlyRate)}/hr</dd>
+      </div>
+
+      {/* ── Classification ── */}
+      <div className="admin-detail-dl-row">
+        <dt>Effort Level</dt>
+        <dd data-testid="quote-effort">{EFFORT_LABEL[quote.quoteEffortLevelId] ?? '—'}</dd>
+      </div>
+      <div className="admin-detail-dl-row">
+        <dt>Confidence Level</dt>
+        <dd data-testid="quote-confidence">
+          {quote.quoteConfidenceLevelId != null ? (
+            (CONFIDENCE_LABEL[quote.quoteConfidenceLevelId] ?? '—')
+          ) : (
+            <em className="admin-detail-unassigned">Not set</em>
+          )}
+        </dd>
+      </div>
+      <div className="admin-detail-dl-row">
+        <dt>Suggested Priority</dt>
+        <dd data-testid="quote-suggested-priority">
+          {PRIORITY_LABEL[quote.suggestedTicketPriorityId] ?? '—'}
+        </dd>
+      </div>
+
+      {/* ── Timestamps ── */}
+      <div className="admin-detail-dl-row">
+        <dt>Created</dt>
+        <dd data-testid="quote-created-at">{fmt.date(quote.createdAt)}</dd>
+      </div>
+      <div className="admin-detail-dl-row">
+        <dt>Last Updated</dt>
+        <dd data-testid="quote-updated-at">{fmt.date(quote.updatedAt)}</dd>
+      </div>
+    </dl>
+  </div>
+);
 import './AdminQuotePanel.css';
 
 interface AdminQuotePanelProps {
@@ -77,7 +216,9 @@ const AdminQuotePanel: React.FC<AdminQuotePanelProps> = ({ ticketId, quotes, onQ
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ): void => {
     const { name, value } = e.target;
-    setManualForm((prev) => ({ ...prev, [name]: value }));
+    // ID fields come back from <select> as strings — coerce them immediately
+    const isIdField = name === 'quoteEffortLevelId' || name === 'quoteConfidenceLevelId';
+    setManualForm((prev) => ({ ...prev, [name]: isIdField ? Number(value) : value }));
   };
 
   const handleManualSubmit = (e: React.SyntheticEvent<HTMLFormElement>): void => {
@@ -165,7 +306,7 @@ const AdminQuotePanel: React.FC<AdminQuotePanelProps> = ({ ticketId, quotes, onQ
 
       {/* ── Existing quote display ── */}
       {latestQuote ? (
-        <QuotePanel ticketId={ticketId} quote={latestQuote} />
+        <AdminQuoteDisplay quote={latestQuote} />
       ) : (
         <p className="loading-text" data-testid="admin-no-quote">
           No quote has been generated yet.
