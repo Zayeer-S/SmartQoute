@@ -1,20 +1,27 @@
 import express, { type Express } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import { initializeDatabase } from './database.bootstrap';
-import { backEnv } from '../config';
-import { AuthContainer } from '../containers/auth.container';
-import { AdminContainer } from '../containers/admin.container';
-import { createAuthRoutes } from '../routes/auth.routes';
-import { createAdminRoutes } from '../routes/admin.routes';
-import { authConfig } from '../config/auth-config';
-import type { SessionService } from '../services/auth/session.service';
-import { errorHandler, notFoundHandler } from '../middleware/error.middleware';
-import { TicketContainer } from '../containers/ticket.container';
-import { createTicketRoutes } from '../routes/ticket.routes';
-import { QuoteContainer } from '../containers/quote.container';
+import { initializeDatabase } from './database.bootstrap.js';
+import { backEnv } from '../config/env.backend.js';
+import { AuthContainer } from '../containers/auth.container.js';
+import { AdminContainer } from '../containers/admin.container.js';
+import { createAuthRoutes } from '../routes/auth.routes.js';
+import { createAdminRoutes } from '../routes/admin.routes.js';
+import { authConfig } from '../config/auth-config.js';
+import type { SessionService } from '../services/auth/session.service.js';
+import { errorHandler, notFoundHandler } from '../middleware/error.middleware.js';
+import { TicketContainer } from '../containers/ticket.container.js';
+import { createTicketRoutes } from '../routes/ticket.routes.js';
+import { QuoteContainer } from '../containers/quote.container.js';
 
-export async function bootstrapApplication(): Promise<Express> {
+interface BootstrapOptions {
+  /** Set to false in Lambda — background jobs are meaningless in stateless invocations */
+  runBackgroundJobs?: boolean;
+}
+
+export async function bootstrapApplication(
+  options: BootstrapOptions = { runBackgroundJobs: true }
+): Promise<Express> {
   console.log('Bootstrapping application...');
 
   const db = await initializeDatabase();
@@ -67,7 +74,9 @@ export async function bootstrapApplication(): Promise<Express> {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
   });
 
-  startSessionCleanupJob(authContainer.sessionService);
+  if (options.runBackgroundJobs) {
+    startSessionCleanupJob(authContainer.sessionService);
+  }
 
   app.use(notFoundHandler);
   app.use(errorHandler);

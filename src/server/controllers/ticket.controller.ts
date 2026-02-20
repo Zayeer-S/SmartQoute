@@ -1,21 +1,21 @@
 import type { Request, Response } from 'express';
-import type { AuthenticatedRequest } from '../middleware/auth.middleware';
-import { validateOrThrow } from '../validators/validation-utils';
+import type { AuthenticatedRequest } from '../middleware/auth.middleware.js';
+import { validateOrThrow } from '../validators/validation-utils.js';
 import {
   addCommentSchema,
   assignTicketSchema,
   createTicketSchema,
   listTicketsQuerySchema,
   updateTicketSchema,
-} from '../validators/ticket.validator';
-import { success, error } from '../lib/respond';
+} from '../validators/ticket.validator.js';
+import { success, error } from '../lib/respond.js';
 import type {
   CommentResponse,
   ListCommentsResponse,
   ListTicketsResponse,
   TicketDetailResponse,
   TicketResponse,
-} from '../../shared/contracts/ticket-contracts';
+} from '../../shared/contracts/ticket-contracts.js';
 import type {
   UserId,
   TicketId,
@@ -24,11 +24,11 @@ import type {
   TicketSeverityId,
   BusinessImpactId,
   TicketPriorityId,
-} from '../database/types/ids';
-import type { Ticket, TicketWithDetails, TicketComment } from '../database/types/tables';
-import type { OrganizationId, TicketStatusId } from '../database/types/ids';
-import type { TicketService } from '../services/ticket/ticket.service';
-import type { CommentService } from '../services/ticket/comment.service';
+} from '../database/types/ids.js';
+import type { Ticket, TicketWithDetails, TicketComment } from '../database/types/tables.js';
+import type { OrganizationId, TicketStatusId } from '../database/types/ids.js';
+import type { TicketService } from '../services/ticket/ticket.service.js';
+import type { CommentService } from '../services/ticket/comment.service.js';
 
 export class TicketController {
   private ticketService: TicketService;

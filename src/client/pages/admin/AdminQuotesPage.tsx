@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useListTickets } from '../../hooks/tickets/useListTicket';
-import { useListQuotes } from '../../hooks/quotes/useListQuote';
-import { CLIENT_ROUTES } from '../../constants/client.routes';
-import { getStatusBadgeClass } from '../../lib/utils/badge-utils';
-import { QUOTE_APPROVAL_STATUSES, TICKET_STATUSES } from '../../../shared/constants/lookup-values';
-import type { QuoteApprovalStatus } from '../../../shared/constants/lookup-values';
-import type { TicketDetailResponse } from '../../../shared/contracts/ticket-contracts';
-import type { QuoteResponse } from '../../../shared/contracts/quote-contracts';
+import { useListTickets } from '../../hooks/tickets/useListTicket.js';
+import { useListQuotes } from '../../hooks/quotes/useListQuote.js';
+import { CLIENT_ROUTES } from '../../constants/client.routes.js';
+import { getStatusBadgeClass } from '../../lib/utils/badge-utils.js';
+import {
+  QUOTE_APPROVAL_STATUSES,
+  TICKET_STATUSES,
+} from '../../../shared/constants/lookup-values.js';
+import type { QuoteApprovalStatus } from '../../../shared/constants/lookup-values.js';
+import type { TicketDetailResponse } from '../../../shared/contracts/ticket-contracts.js';
+import type { QuoteResponse } from '../../../shared/contracts/quote-contracts.js';
 import './AdminQuotesPage.css';
 
 type ApprovalFilter = QuoteApprovalStatus | '';

@@ -3,7 +3,7 @@ import {
   TICKET_PRIORITIES,
   type TicketStatus,
   type TicketPriority,
-} from '../../../shared/constants/lookup-values';
+} from '../../../shared/constants/lookup-values.js';
 
 const STATUS_BADGE_CLASS: Record<TicketStatus, string> = {
   [TICKET_STATUSES.OPEN]: 'badge badge-open',

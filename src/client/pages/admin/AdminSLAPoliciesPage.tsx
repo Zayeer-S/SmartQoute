@@ -1,5 +1,5 @@
 import React from 'react';
-import { TICKET_SEVERITIES, TICKET_PRIORITIES } from '../../../shared/constants/lookup-values';
+import { TICKET_SEVERITIES, TICKET_PRIORITIES } from '../../../shared/constants/lookup-values.js';
 import './AdminSLAPoliciesPage.css';
 
 interface SlaPolicyRow {

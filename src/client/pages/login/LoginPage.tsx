@@ -1,9 +1,9 @@
 // This exists due to handleSubmit, if you add void there it will break the login
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import React, { useState } from 'react';
-import { CLIENT_ROUTES } from '../../constants/client.routes';
-import { useLogin } from '../../hooks/useLogin';
-import { EyeIcon, EyeOffIcon } from '../../components/icons/LoginIcons';
+import { CLIENT_ROUTES } from '../../constants/client.routes.js';
+import { useLogin } from '../../hooks/useLogin.js';
+import { EyeIcon, EyeOffIcon } from '../../components/icons/LoginIcons.js';
 import './LoginPage.css';
 
 const LoginPage: React.FC = () => {

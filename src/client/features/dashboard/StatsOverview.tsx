@@ -1,6 +1,6 @@
 import React from 'react';
-import type { TicketDetailResponse } from '../../../shared/contracts/ticket-contracts';
-import { TICKET_STATUSES } from '../../../shared/constants/lookup-values';
+import type { TicketDetailResponse } from '../../../shared/contracts/ticket-contracts.js';
+import { TICKET_STATUSES } from '../../../shared/constants/lookup-values.js';
 import './StatsOverview.css';
 
 interface StatsOverviewProps {

@@ -1,5 +1,5 @@
-import type { AuthConfig, AuthRateLimitConfig, PasswordConfig } from '../services/auth/index';
-import { backEnv } from './env.backend';
+import type { AuthConfig, AuthRateLimitConfig, PasswordConfig } from '../services/auth/index.js';
+import { backEnv } from './env.backend.js';
 
 export const passwordConfig: PasswordConfig = {
   saltRounds: backEnv.BCRYPT_SALT_ROUNDS,

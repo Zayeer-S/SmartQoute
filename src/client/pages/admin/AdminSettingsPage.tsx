@@ -3,7 +3,7 @@ import {
   SMARTQUOTE_CONFIG_KEYS,
   TICKET_TYPES,
   TICKET_SEVERITIES,
-} from '../../../shared/constants/lookup-values';
+} from '../../../shared/constants/lookup-values.js';
 import './AdminSettingsPage.css';
 
 const RATE_PROFILE_COLUMNS = [

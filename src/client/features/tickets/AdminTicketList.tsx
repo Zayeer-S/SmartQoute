@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo } from 'react';
-import { useListTickets } from '../../hooks/tickets/useListTicket';
-import { useTicketFilters } from '../../hooks/useTicketFilters';
-import AdminTicketCard from './AdminTicketCard';
-import TicketFilters from './TicketFilters';
-import TicketPagination from './TicketPagination';
+import { useListTickets } from '../../hooks/tickets/useListTicket.js';
+import { useTicketFilters } from '../../hooks/useTicketFilters.js';
+import AdminTicketCard from './AdminTicketCard.js';
+import TicketFilters from './TicketFilters.js';
+import TicketPagination from './TicketPagination.js';
 import './AdminTicketList.css';
 
 /**

@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { backEnv } from '../../../config';
+import { backEnv } from '../../../config/env.backend.js';
 
 const DEV_PASSWORD = 'password';
 

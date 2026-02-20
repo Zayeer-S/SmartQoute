@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import type { TicketController } from '../controllers/ticket.controller';
-import type { AuthService } from '../services/auth/auth.service';
-import type { RBACService } from '../services/rbac/rbac.service';
-import { createAuthMiddleware } from '../middleware/auth.middleware';
-import { requirePermission } from '../middleware/rbac.middleware';
-import { PERMISSIONS } from '../../shared/constants/lookup-values';
+import type { TicketController } from '../controllers/ticket.controller.js';
+import type { AuthService } from '../services/auth/auth.service.js';
+import type { RBACService } from '../services/rbac/rbac.service.js';
+import { createAuthMiddleware } from '../middleware/auth.middleware.js';
+import { requirePermission } from '../middleware/rbac.middleware.js';
+import { PERMISSIONS } from '../../shared/constants/lookup-values.js';
 import { TICKET_ENDPOINTS, QUOTE_ENDPOINTS } from '../../shared/constants';
-import type { QuoteController } from '../controllers/quote.controller';
+import type { QuoteController } from '../controllers/quote.controller.js';
 
 export function createTicketRoutes(
   ticketController: TicketController,

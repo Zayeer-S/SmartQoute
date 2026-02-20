@@ -1,9 +1,9 @@
 import type { Request, Response } from 'express';
 import { ZodError } from 'zod';
-import { AuthError, PasswordValidationError } from '../services/auth/auth.errors';
-import { formatValidationError } from '../validators/validation-utils';
-import { error } from '../lib/respond';
-import { ForbiddenError, TicketError } from '../services/ticket/ticket.errors';
+import { AuthError, PasswordValidationError } from '../services/auth/auth.errors.js';
+import { formatValidationError } from '../validators/validation-utils.js';
+import { error } from '../lib/respond.js';
+import { ForbiddenError, TicketError } from '../services/ticket/ticket.errors.js';
 
 /**
  * Global Error Handling Middleware

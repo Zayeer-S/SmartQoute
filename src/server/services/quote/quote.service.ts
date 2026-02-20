@@ -1,13 +1,13 @@
-import type { QuotesDAO } from '../../daos/children/quotes.dao';
-import type { TicketsDAO } from '../../daos/children/tickets.dao';
-import type { UsersDAO } from '../../daos/children/users.dao';
-import type { RBACService } from '../rbac/rbac.service';
+import type { QuotesDAO } from '../../daos/children/quotes.dao.js';
+import type { TicketsDAO } from '../../daos/children/tickets.dao.js';
+import type { UsersDAO } from '../../daos/children/users.dao.js';
+import type { RBACService } from '../rbac/rbac.service.js';
 import type {
   Quote,
   QuoteApproval,
   QuoteDetailRevision,
   QuoteWithApproval,
-} from '../../database/types/tables';
+} from '../../database/types/tables.js';
 import type {
   QuoteApprovalId,
   QuoteApprovalStatusId,
@@ -16,13 +16,13 @@ import type {
   QuoteId,
   TicketId,
   UserId,
-} from '../../database/types/ids';
-import type { InsertData, TransactionContext } from '../../daos/base/types';
-import { PERMISSIONS } from '../../../shared/constants/lookup-values';
-import type { QuoteApprovalsDAO } from '../../daos/children/quote.approvals.dao';
-import type { QuoteDetailRevisionsDAO } from '../../daos/children/quote.detail.revisions.dao';
-import { ForbiddenError, TICKET_ERROR_MSGS, TicketError } from '../ticket/ticket.errors';
-import { QUOTE_ERROR_MSGS, QuoteError } from './quote.errors';
+} from '../../database/types/ids.js';
+import type { InsertData, TransactionContext } from '../../daos/base/types.js';
+import { PERMISSIONS } from '../../../shared/constants/lookup-values.js';
+import type { QuoteApprovalsDAO } from '../../daos/children/quote.approvals.dao.js';
+import type { QuoteDetailRevisionsDAO } from '../../daos/children/quote.detail.revisions.dao.js';
+import { ForbiddenError, TICKET_ERROR_MSGS, TicketError } from '../ticket/ticket.errors.js';
+import { QUOTE_ERROR_MSGS, QuoteError } from './quote.errors.js';
 
 export interface CreateManualQuoteData {
   estimated_hours_minimum: number;
@@ -457,7 +457,7 @@ export class QuoteService {
    * the old and new quote snapshots.
    */
   private async writeRevisions(
-    oldQuoteId: QuoteId,
+    _oldQuoteId: QuoteId,
     newQuoteId: QuoteId,
     old: Quote,
     next: InsertData<Quote>,

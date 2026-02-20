@@ -1,12 +1,12 @@
 import type { Knex } from 'knex';
-import { TicketsDAO } from '../daos/children/tickets.dao';
-import { TicketCommentsDAO } from '../daos/children/ticket.comments.dao';
-import { TicketAttachmentsDAO } from '../daos/children/ticket.attachments.dao';
-import { UsersDAO } from '../daos/children/users.dao';
-import { TicketService } from '../services/ticket/ticket.service';
-import { CommentService } from '../services/ticket/comment.service';
-import { TicketController } from '../controllers/ticket.controller';
-import { RBACService } from '../services/rbac/rbac.service';
+import { TicketsDAO } from '../daos/children/tickets.dao.js';
+import { TicketCommentsDAO } from '../daos/children/ticket.comments.dao.js';
+import { TicketAttachmentsDAO } from '../daos/children/ticket.attachments.dao.js';
+import { UsersDAO } from '../daos/children/users.dao.js';
+import { TicketService } from '../services/ticket/ticket.service.js';
+import { CommentService } from '../services/ticket/comment.service.js';
+import { TicketController } from '../controllers/ticket.controller.js';
+import { RBACService } from '../services/rbac/rbac.service.js';
 
 export class TicketContainer {
   public readonly ticketsDAO: TicketsDAO;

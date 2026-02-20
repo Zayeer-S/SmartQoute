@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { CLIENT_ROUTES } from '../../constants/client.routes';
-import { getStatusBadgeClass, getPriorityBadgeClass } from '../../lib/utils/badge-utils';
-import type { TicketDetailResponse } from '../../../shared/contracts/ticket-contracts';
+import { CLIENT_ROUTES } from '../../constants/client.routes.js';
+import { getStatusBadgeClass, getPriorityBadgeClass } from '../../lib/utils/badge-utils.js';
+import type { TicketDetailResponse } from '../../../shared/contracts/ticket-contracts.js';
 import './AdminTicketCard.css';
 
 interface AdminTicketCardProps {

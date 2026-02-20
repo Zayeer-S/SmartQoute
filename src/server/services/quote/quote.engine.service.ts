@@ -1,14 +1,19 @@
 import { PERMISSIONS } from '../../../shared/constants';
-import type { InsertData, TransactionContext } from '../../daos/base/types';
-import type { QuoteCalculationRulesDAO } from '../../daos/children/quote.calculation.rules.dao';
-import type { QuotesDAO } from '../../daos/children/quotes.dao';
-import type { RateProfilesDAO } from '../../daos/children/rate.profiles.dao';
-import type { TicketsDAO } from '../../daos/children/tickets.dao';
-import type { TicketId, UserId } from '../../database/types/ids';
-import type { Quote, QuoteCalculationRule, RateProfile, Ticket } from '../../database/types/tables';
-import type { RBACService } from '../rbac/rbac.service';
-import { ForbiddenError, TICKET_ERROR_MSGS, TicketError } from '../ticket/ticket.errors';
-import { QUOTE_ERROR_MSGS, QuoteError } from './quote.errors';
+import type { InsertData, TransactionContext } from '../../daos/base/types.js';
+import type { QuoteCalculationRulesDAO } from '../../daos/children/quote.calculation.rules.dao.js';
+import type { QuotesDAO } from '../../daos/children/quotes.dao.js';
+import type { RateProfilesDAO } from '../../daos/children/rate.profiles.dao.js';
+import type { TicketsDAO } from '../../daos/children/tickets.dao.js';
+import type { TicketId, UserId } from '../../database/types/ids.js';
+import type {
+  Quote,
+  QuoteCalculationRule,
+  RateProfile,
+  Ticket,
+} from '../../database/types/tables.js';
+import type { RBACService } from '../rbac/rbac.service.js';
+import { ForbiddenError, TICKET_ERROR_MSGS, TicketError } from '../ticket/ticket.errors.js';
+import { QUOTE_ERROR_MSGS, QuoteError } from './quote.errors.js';
 
 export interface ComputeQuoteInput {
   ticket: Ticket;
@@ -232,9 +237,9 @@ export class QuoteEngineService {
   // eslint-disable-next-line @typescript-eslint/require-await
   private async resolveEffortHours(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    rule: QuoteCalculationRule,
+    _rule: QuoteCalculationRule,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    options?: TransactionContext
+    _options?: TransactionContext
   ): Promise<{ effortHoursMin: number; effortHoursMax: number }> {
     // Fall back to a sensible default range if no effort level range is seeded.
     // The quote engine should not fail hard on missing configuration, it should bruh bruh

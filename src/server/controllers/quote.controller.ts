@@ -1,28 +1,28 @@
 import type { Request, Response } from 'express';
-import type { AuthenticatedRequest } from '../middleware/auth.middleware';
-import { validateOrThrow } from '../validators/validation-utils';
-import { success, error } from '../lib/respond';
+import type { AuthenticatedRequest } from '../middleware/auth.middleware.js';
+import { validateOrThrow } from '../validators/validation-utils.js';
+import { success, error } from '../lib/respond.js';
 import type {
   UserId,
   QuoteId,
   TicketId,
   QuoteEffortLevelId,
   QuoteConfidenceId,
-} from '../database/types/ids';
+} from '../database/types/ids.js';
 import type {
   Quote,
   QuoteApproval,
   QuoteDetailRevision,
   QuoteWithApproval,
-} from '../database/types/tables';
-import type { QuoteService } from '../services/quote/quote.service';
-import type { QuoteEngineService } from '../services/quote/quote.engine.service';
+} from '../database/types/tables.js';
+import type { QuoteService } from '../services/quote/quote.service.js';
+import type { QuoteEngineService } from '../services/quote/quote.engine.service.js';
 import {
   approveQuoteSchema,
   createManualQuoteSchema,
   rejectQuoteSchema,
   updateQuoteSchema,
-} from '../validators/quote.validator';
+} from '../validators/quote.validator.js';
 import type {
   ListQuotesResponse,
   ListRevisionsResponse,
@@ -30,7 +30,7 @@ import type {
   QuoteResponse,
   QuoteRevisionResponse,
   QuoteWithApprovalResponse,
-} from '../../shared/contracts/quote-contracts';
+} from '../../shared/contracts/quote-contracts.js';
 
 export class QuoteController {
   private quoteService: QuoteService;

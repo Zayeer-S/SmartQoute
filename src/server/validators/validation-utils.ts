@@ -1,5 +1,5 @@
 import z from 'zod';
-import { passwordConfig } from '../config/auth-config';
+import { passwordConfig } from '../config/auth-config.js';
 
 export function buildPasswordSchema() {
   let schema = z

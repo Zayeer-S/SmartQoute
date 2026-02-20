@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { useListComments } from '../../hooks/tickets/useListComments';
-import { COMMENT_TYPES, LOOKUP_IDS } from '../../../shared/constants/lookup-values';
+import { useListComments } from '../../hooks/tickets/useListComments.js';
+import { COMMENT_TYPES, LOOKUP_IDS } from '../../../shared/constants/lookup-values.js';
 import './TicketTimeline.css';
 
 interface TicketTimelineProps {

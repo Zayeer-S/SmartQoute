@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 import { PERMISSIONS } from '../../../shared/constants';
-import type { GetManyOptions, InsertData, TransactionContext } from '../../daos/base/types';
-import type { TicketsDAO } from '../../daos/children/tickets.dao';
-import type { UsersDAO } from '../../daos/children/users.dao';
+import type { GetManyOptions, InsertData, TransactionContext } from '../../daos/base/types.js';
+import type { TicketsDAO } from '../../daos/children/tickets.dao.js';
+import type { UsersDAO } from '../../daos/children/users.dao.js';
 import type {
   BusinessImpactId,
   TicketId,
@@ -10,11 +10,11 @@ import type {
   TicketStatusId,
   TicketTypeId,
   UserId,
-} from '../../database/types/ids';
-import type { Ticket, TicketWithDetails } from '../../database/types/tables';
-import type { RBACService } from '../rbac/rbac.service';
-import { ForbiddenError, TICKET_ERROR_MSGS, TicketError } from './ticket.errors';
-import type { CreateTicketData, ListTicketsFilters, UpdateTicketData } from './ticket.types';
+} from '../../database/types/ids.js';
+import type { Ticket, TicketWithDetails } from '../../database/types/tables.js';
+import type { RBACService } from '../rbac/rbac.service.js';
+import { ForbiddenError, TICKET_ERROR_MSGS, TicketError } from './ticket.errors.js';
+import type { CreateTicketData, ListTicketsFilters, UpdateTicketData } from './ticket.types.js';
 
 export class TicketService {
   private ticketsDAO: TicketsDAO;

@@ -125,16 +125,12 @@ export async function seed(knex: Knex): Promise<void> {
 
   const passwordHash = await getDevPasswordHash();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { customer1Id, customer2Id, supportAgentId, managerId, adminId } = await generateUsers(
-    knex,
-    {
-      passwordHash,
-      org1Id,
-      org2Id,
-      roleIdMap: lookupIds.roles,
-    }
-  );
+  const { customer1Id, customer2Id, supportAgentId, managerId } = await generateUsers(knex, {
+    passwordHash,
+    org1Id,
+    org2Id,
+    roleIdMap: lookupIds.roles,
+  });
 
   const ticketIds = await generateTickets(knex, {
     customer1Id,

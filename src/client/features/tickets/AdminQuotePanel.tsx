@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useGenerateQuote } from '../../hooks/quotes/useGenerateQuote';
-import { useCreateManualQuote } from '../../hooks/quotes/useCreateManualQuote';
-import { useUpdateQuote } from '../../hooks/quotes/useUpdateQuote';
-import { useSubmitForApproval } from '../../hooks/quotes/useSubmitForApproval';
-import { useGetRevisionHistory } from '../../hooks/quotes/useGetRevisionHistory';
-import { useQuotePermissions } from '../../hooks/auth/useQuotePermissions';
+import { useGenerateQuote } from '../../hooks/quotes/useGenerateQuote.js';
+import { useCreateManualQuote } from '../../hooks/quotes/useCreateManualQuote.js';
+import { useUpdateQuote } from '../../hooks/quotes/useUpdateQuote.js';
+import { useSubmitForApproval } from '../../hooks/quotes/useSubmitForApproval.js';
+import { useGetRevisionHistory } from '../../hooks/quotes/useGetRevisionHistory.js';
+import { useQuotePermissions } from '../../hooks/auth/useQuotePermissions.js';
 import {
   LOOKUP_IDS,
   QUOTE_EFFORT_LEVELS,
@@ -12,8 +12,8 @@ import {
   QUOTE_CREATORS,
   TICKET_PRIORITIES,
   QUOTE_APPROVAL_STATUSES,
-} from '../../../shared/constants/lookup-values';
-import type { QuoteResponse } from '../../../shared/contracts/quote-contracts';
+} from '../../../shared/constants/lookup-values.js';
+import type { QuoteResponse } from '../../../shared/contracts/quote-contracts.js';
 
 const EFFORT_LABEL: Record<number, string> = {
   [LOOKUP_IDS.QUOTE_EFFORT_LEVEL.LOW]: QUOTE_EFFORT_LEVELS.LOW,

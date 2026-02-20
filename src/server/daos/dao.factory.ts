@@ -1,13 +1,13 @@
 import type { Knex } from 'knex';
-import { getDb } from '../database/connection';
-import { LINK_TABLES, LOOKUP_TABLES, MAIN_TABLES } from '../database/config/table-names';
-import { RolesDAO } from './children/roles.dao';
-import { PermissionsDAO } from './children/permissions.dao';
-import { UsersDAO } from './children/users.dao';
-import { TicketsDAO } from './children/tickets.dao';
-import { SessionsDAO } from './children/sessions.dao';
-import { TicketCommentsDAO } from './children/ticket.comments.dao';
-import { TicketAttachmentsDAO } from './children/ticket.attachments.dao';
+import { getDb } from '../database/connection.js';
+import { LINK_TABLES, LOOKUP_TABLES, MAIN_TABLES } from '../database/config/table-names.js';
+import { RolesDAO } from './children/roles.dao.js';
+import { PermissionsDAO } from './children/permissions.dao.js';
+import { UsersDAO } from './children/users.dao.js';
+import { TicketsDAO } from './children/tickets.dao.js';
+import { SessionsDAO } from './children/sessions.dao.js';
+import { TicketCommentsDAO } from './children/ticket.comments.dao.js';
+import { TicketAttachmentsDAO } from './children/ticket.attachments.dao.js';
 
 type DaoConstructor<T> = new (db: Knex) => T;
 

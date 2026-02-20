@@ -6,7 +6,7 @@ import type {
   TicketStatusId,
   TicketTypeId,
   UserId,
-} from '../../database/types/ids';
+} from '../../database/types/ids.js';
 
 export interface CreateTicketData {
   title: string;

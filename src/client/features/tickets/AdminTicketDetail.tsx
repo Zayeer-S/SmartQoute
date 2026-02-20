@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useGetTicket } from '../../hooks/tickets/useGetTicket';
-import { useListQuotes } from '../../hooks/quotes/useListQuote';
-import { useResolveTicket } from '../../hooks/tickets/useResolveTicket';
-import { useTicketPermissions } from '../../hooks/auth/useTicketPermissions';
-import { getStatusBadgeClass, getPriorityBadgeClass } from '../../lib/utils/badge-utils';
-import AssignTicketForm from './AssignTicketForm';
-import AdminQuotePanel from './AdminQuotePanel';
-import CommentThread from './CommentThread';
+import { useGetTicket } from '../../hooks/tickets/useGetTicket.js';
+import { useListQuotes } from '../../hooks/quotes/useListQuote.js';
+import { useResolveTicket } from '../../hooks/tickets/useResolveTicket.js';
+import { useTicketPermissions } from '../../hooks/auth/useTicketPermissions.js';
+import { getStatusBadgeClass, getPriorityBadgeClass } from '../../lib/utils/badge-utils.js';
+import AssignTicketForm from './AssignTicketForm.js';
+import AdminQuotePanel from './AdminQuotePanel.js';
+import CommentThread from './CommentThread.js';
 import './AdminTicketDetail.css';
 
 interface AdminTicketDetailProps {

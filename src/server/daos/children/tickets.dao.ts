@@ -1,9 +1,9 @@
 import type { Knex } from 'knex';
-import type { OrganizationId, TicketId, TicketStatusId, UserId } from '../../database/types/ids';
-import { DeletableDAO } from '../base/deletable.dao';
-import { LOOKUP_TABLES, MAIN_TABLES } from '../../database/config/table-names';
-import type { GetManyOptions, QueryOptions } from '../base/types';
-import type { Ticket, TicketWithDetails } from '../../database/types/tables';
+import type { OrganizationId, TicketId, TicketStatusId, UserId } from '../../database/types/ids.js';
+import { DeletableDAO } from '../base/deletable.dao.js';
+import { LOOKUP_TABLES, MAIN_TABLES } from '../../database/config/table-names.js';
+import type { GetManyOptions, QueryOptions } from '../base/types.js';
+import type { Ticket, TicketWithDetails } from '../../database/types/tables.js';
 
 export class TicketsDAO extends DeletableDAO<Ticket, TicketId> {
   constructor(db: Knex) {

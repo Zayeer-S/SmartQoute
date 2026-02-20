@@ -1,6 +1,6 @@
-import type { BaseLookupTable } from '../../database/types/tables';
-import { ActivatableDAO } from '../base/activatable.dao';
-import type { PrimaryKey, QueryOptions } from '../base/types';
+import type { BaseLookupTable } from '../../database/types/tables.js';
+import { ActivatableDAO } from '../base/activatable.dao.js';
+import type { PrimaryKey, QueryOptions } from '../base/types.js';
 
 export abstract class LookupTableDAO<
   T extends BaseLookupTable & { id: ID },

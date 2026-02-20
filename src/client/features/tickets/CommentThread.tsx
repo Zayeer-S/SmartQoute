@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useListComments } from '../../hooks/tickets/useListComments';
-import { useAddComment } from '../../hooks/tickets/useAddComment';
-import { COMMENT_TYPES, LOOKUP_IDS } from '../../../shared/constants/lookup-values';
-import type { CommentType } from '../../../shared/constants/lookup-values';
+import { useListComments } from '../../hooks/tickets/useListComments.js';
+import { useAddComment } from '../../hooks/tickets/useAddComment.js';
+import { COMMENT_TYPES, LOOKUP_IDS } from '../../../shared/constants/lookup-values.js';
+import type { CommentType } from '../../../shared/constants/lookup-values.js';
 import './CommentThread.css';
 
 interface CommentThreadProps {

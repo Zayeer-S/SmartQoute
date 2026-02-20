@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { useCreateTicket } from '../../hooks/tickets/useCreateTicket';
+import { useCreateTicket } from '../../hooks/tickets/useCreateTicket.js';
 import {
   TICKET_TYPES,
   TICKET_SEVERITIES,
   BUSINESS_IMPACTS,
   TICKET_PRIORITIES,
   LOOKUP_IDS,
-} from '../../../shared/constants/lookup-values';
-import type { CreateTicketRequest } from '../../../shared/contracts/ticket-contracts';
+} from '../../../shared/constants/lookup-values.js';
+import type { CreateTicketRequest } from '../../../shared/contracts/ticket-contracts.js';
 import './SubmitTicketForm.css';
 
 interface SubmitTicketFormProps {

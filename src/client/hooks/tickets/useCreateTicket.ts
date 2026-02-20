@@ -2,8 +2,8 @@ import { useState } from 'react';
 import type {
   CreateTicketRequest,
   TicketResponse,
-} from '../../../shared/contracts/ticket-contracts';
-import { ticketAPI } from '../../lib/api/ticket.api';
+} from '../../../shared/contracts/ticket-contracts.js';
+import { ticketAPI } from '../../lib/api/ticket.api.js';
 
 interface UseCreateTicketState {
   data: TicketResponse | null;

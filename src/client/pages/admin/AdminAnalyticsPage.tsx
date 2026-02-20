@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { useListTickets } from '../../hooks/tickets/useListTicket';
-import StatsOverview from '../../features/dashboard/StatsOverview';
-import TicketStatusChart from '../../features/dashboard/TicketStatusChart';
+import { useListTickets } from '../../hooks/tickets/useListTicket.js';
+import StatsOverview from '../../features/dashboard/StatsOverview.js';
+import TicketStatusChart from '../../features/dashboard/TicketStatusChart.js';
 import './AdminAnalyticsPage.css';
 
 const AdminAnalyticsPage: React.FC = () => {

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import type { TICKET_STATUSES, TICKET_TYPES } from '../../shared/constants';
-import type { TicketDetailResponse } from '../../shared/contracts/ticket-contracts';
+import type { TicketDetailResponse } from '../../shared/contracts/ticket-contracts.js';
 
 const PAGE_SIZE = 10;
 

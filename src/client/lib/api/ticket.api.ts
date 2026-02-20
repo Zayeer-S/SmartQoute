@@ -8,9 +8,9 @@ import type {
   TicketDetailResponse,
   TicketResponse,
   UpdateTicketRequest,
-} from '../../../shared/contracts/ticket-contracts';
-import { TICKET_ENDPOINTS } from '../../../shared/constants/endpoints';
-import { extractData, httpClient, type ApiResponse } from './http-client';
+} from '../../../shared/contracts/ticket-contracts.js';
+import { TICKET_ENDPOINTS } from '../../../shared/constants/endpoints.js';
+import { extractData, httpClient, type ApiResponse } from './http-client.js';
 
 const base = TICKET_ENDPOINTS.BASE;
 

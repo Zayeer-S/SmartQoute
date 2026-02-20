@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
-import type { PasswordConfig } from './auth.config.types';
+import type { PasswordConfig } from './auth.config.types.js';
 
 export class PasswordService {
   private readonly config: PasswordConfig;

@@ -1,11 +1,11 @@
-import type { TicketsDAO } from '../../daos/children/tickets.dao';
-import type { RBACService } from '../rbac/rbac.service';
-import type { TicketComment } from '../../database/types/tables';
-import type { CommentTypeId, TicketId, UserId } from '../../database/types/ids';
-import type { InsertData, TransactionContext } from '../../daos/base/types';
-import { PERMISSIONS } from '../../../shared/constants/lookup-values';
-import { ForbiddenError, TicketError, TICKET_ERROR_MSGS } from './ticket.errors';
-import type { TicketCommentsDAO } from '../../daos/children/ticket.comments.dao';
+import type { TicketsDAO } from '../../daos/children/tickets.dao.js';
+import type { RBACService } from '../rbac/rbac.service.js';
+import type { TicketComment } from '../../database/types/tables.js';
+import type { CommentTypeId, TicketId, UserId } from '../../database/types/ids.js';
+import type { InsertData, TransactionContext } from '../../daos/base/types.js';
+import { PERMISSIONS } from '../../../shared/constants/lookup-values.js';
+import { ForbiddenError, TicketError, TICKET_ERROR_MSGS } from './ticket.errors.js';
+import type { TicketCommentsDAO } from '../../daos/children/ticket.comments.dao.js';
 
 export class CommentService {
   private ticketCommentsDAO: TicketCommentsDAO;

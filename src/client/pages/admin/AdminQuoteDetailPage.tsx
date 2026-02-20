@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { CLIENT_ROUTES } from '../../constants/client.routes';
-import { useListQuotes } from '../../hooks/quotes/useListQuote';
-import { useGetTicket } from '../../hooks/tickets/useGetTicket';
-import { getStatusBadgeClass } from '../../lib/utils/badge-utils';
-import AdminQuotePanel from '../../features/tickets/AdminQuotePanel';
-import CommentThread from '../../features/tickets/CommentThread';
+import { CLIENT_ROUTES } from '../../constants/client.routes.js';
+import { useListQuotes } from '../../hooks/quotes/useListQuote.js';
+import { useGetTicket } from '../../hooks/tickets/useGetTicket.js';
+import { getStatusBadgeClass } from '../../lib/utils/badge-utils.js';
+import AdminQuotePanel from '../../features/tickets/AdminQuotePanel.js';
+import CommentThread from '../../features/tickets/CommentThread.js';
 import './AdminQuoteDetailPage.css';
 
 const AdminQuoteDetailPage: React.FC = () => {

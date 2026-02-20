@@ -3,7 +3,7 @@ import rateLimit, { type Store } from 'express-rate-limit';
 import RedisStore from 'rate-limit-redis';
 import { createClient } from 'redis';
 import { backEnv } from '../config/env.backend.js';
-import { authRateLimitConfig } from '../config/auth-config';
+import { authRateLimitConfig } from '../config/auth-config.js';
 
 const redisEnvPresent =
   backEnv.REDIS_HOST !== undefined &&

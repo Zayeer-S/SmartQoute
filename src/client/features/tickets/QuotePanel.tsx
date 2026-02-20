@@ -1,11 +1,11 @@
 import React from 'react';
-import type { QuoteResponse } from '../../../shared/contracts/quote-contracts';
+import type { QuoteResponse } from '../../../shared/contracts/quote-contracts.js';
 import {
   LOOKUP_IDS,
   QUOTE_EFFORT_LEVELS,
   QUOTE_CONFIDENCE_LEVELS,
-} from '../../../shared/constants/lookup-values';
-import QuoteActions from './QuoteActions';
+} from '../../../shared/constants/lookup-values.js';
+import QuoteActions from './QuoteActions.js';
 import './QuotePanel.css';
 
 interface QuotePanelProps {

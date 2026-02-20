@@ -1,9 +1,9 @@
 import type { Knex } from 'knex';
-import { BaseDAO } from '../base/base.dao';
-import { LINK_TABLES } from '../../database/config/table-names';
-import type { TicketAttachment } from '../../database/types/tables';
-import type { TicketAttachmentId, TicketId } from '../../database/types/ids';
-import type { GetManyOptions } from '../base/types';
+import { BaseDAO } from '../base/base.dao.js';
+import { LINK_TABLES } from '../../database/config/table-names.js';
+import type { TicketAttachment } from '../../database/types/tables.js';
+import type { TicketAttachmentId, TicketId } from '../../database/types/ids.js';
+import type { GetManyOptions } from '../base/types.js';
 
 export class TicketAttachmentsDAO extends BaseDAO<TicketAttachment, TicketAttachmentId> {
   constructor(db: Knex) {

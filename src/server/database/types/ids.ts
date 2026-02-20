@@ -1,4 +1,4 @@
-import type { LINK_TABLES, LOOKUP_TABLES, MAIN_TABLES } from '../config/table-names';
+import type { LINK_TABLES, LOOKUP_TABLES, MAIN_TABLES } from '../config/table-names.js';
 
 type Brand<K, T> = K & { __brand: T };
 

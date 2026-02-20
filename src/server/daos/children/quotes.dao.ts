@@ -1,9 +1,9 @@
 import type { Knex } from 'knex';
-import { DeletableDAO } from '../base/deletable.dao';
-import { LOOKUP_TABLES, MAIN_TABLES } from '../../database/config/table-names';
-import type { Quote, QuoteWithApproval } from '../../database/types/tables';
-import type { QuoteId, TicketId } from '../../database/types/ids';
-import type { GetManyOptions, QueryOptions } from '../base/types';
+import { DeletableDAO } from '../base/deletable.dao.js';
+import { LOOKUP_TABLES, MAIN_TABLES } from '../../database/config/table-names.js';
+import type { Quote, QuoteWithApproval } from '../../database/types/tables.js';
+import type { QuoteId, TicketId } from '../../database/types/ids.js';
+import type { GetManyOptions, QueryOptions } from '../base/types.js';
 
 export class QuotesDAO extends DeletableDAO<Quote, QuoteId> {
   constructor(db: Knex) {

@@ -1,5 +1,5 @@
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
-import { tokenStorage } from '../storage/tokenStorage';
+import { tokenStorage } from '../storage/tokenStorage.js';
 
 export const httpClient: AxiosInstance = axios.create({
   baseURL: '/api',

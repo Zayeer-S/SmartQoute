@@ -3,17 +3,17 @@ import type {
   GetCurrentUserResponse,
   LoginRequest,
   LoginResponse,
-} from '../../../shared/contracts/auth-contracts';
+} from '../../../shared/contracts/auth-contracts.js';
 import type {
   CreateUserRequest,
   CreateUserResponse,
-} from '../../../shared/contracts/user-contracts';
-import type { TransactionContext } from '../../daos/base/types';
-import type { UsersDAO } from '../../daos/children/users.dao';
-import type { OrganizationId, RoleId, UserId } from '../../database/types/ids';
-import { AUTH_ERROR_MSGS, AuthError, PasswordValidationError } from './auth.errors';
-import type { PasswordService } from './password.service';
-import type { SessionService } from './session.service';
+} from '../../../shared/contracts/user-contracts.js';
+import type { TransactionContext } from '../../daos/base/types.js';
+import type { UsersDAO } from '../../daos/children/users.dao.js';
+import type { OrganizationId, RoleId, UserId } from '../../database/types/ids.js';
+import { AUTH_ERROR_MSGS, AuthError, PasswordValidationError } from './auth.errors.js';
+import type { PasswordService } from './password.service.js';
+import type { SessionService } from './session.service.js';
 
 export class AuthService {
   private usersDAO: UsersDAO;
