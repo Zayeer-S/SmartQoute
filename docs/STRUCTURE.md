@@ -17,19 +17,15 @@ smartquote/
 │   ├── client/
 │   │   ├── main.tsx
 │   │   ├── components/                             # Pure reusable UI elements; must not know about APIs, auths, or domain concepts
-│   │   │   ├── ProtectedRoute.tsx
-│   │   │   ├── icons/
-│   │   │   │   ├── CustomerIcons.tsx
-│   │   │   │   ├── LoginIcons.tsx
-│   │   │   │   ├── SidebarIcons.tsx
-│   │   │   ├── layout/
-│   │   │   │   ├── CustomerSidebar.tsx
+│   │   │   ├── auth/
+│   │   │   │   └── LoginIcons.tsx
+│   │   │   └── ProtectedRoute.tsx
 │   │   ├── config/                                 # Environment and config values only; no runtime logic
 │   │   │   ├── index.ts
 │   │   │   ├── env.frontend.ts
 │   │   ├── constants/
 │   │   │   ├── index.ts
-│   │   │   ├── client.routes.ts
+│   │   │   └── client.routes.ts
 │   │   ├── context/
 │   │   │   ├── auth/
 │   │   │   │   ├── auth.context.types.ts
@@ -38,21 +34,33 @@ smartquote/
 │   │   │   │   ├── sidebar.context.types.ts
 │   │   │   │   └── SidebarContext.ts
 │   │   │   └── theme/
+│   │   │       ├── index.ts
 │   │   │       ├── theme.context.types.ts
 │   │   │       └── ThemeContext.ts
 │   │   ├── features/                               # Feature scoped UI behaviour composed from components and hooks
-│   │   │   ├── customerDashboard/
-│   │   │   │   ├── customerDashboard.constants.ts
-│   │   ├── hooks/                                  # Thin adapters between UI and API layers. No business rules.
+│   │   │   ├── dashboard/
+│   │   │   │   ├── StatsOverview.tsx
+│   │   │   │   └── TicketStatusChart.tsx
+│   │   │   └── tickets/
+│   │   │       ├── QuoteActions.tsx
+│   │   │       ├── QuotePanel.tsx
+│   │   │       ├── SubmitTicketForm.tsx
+│   │   │       ├── TicketCard.tsx
+│   │   │       ├── TicketDetail.tsx
+│   │   │       ├── TicketFilters.tsx
+│   │   │       ├── TicketList.tsx
+│   │   │       └── TicketPagination.tsx
+│   │   ├── hooks/                                  # Thin adapters between UI and API layers. No business rules. All context hooks
 │   │   │   ├── useLogin.ts
-│   │   │   ├── useSidebar.ts                       # Context hook
-│   │   │   ├── useTheme.ts                         # Context hook
 │   │   │   ├── auth/
-│   │   │   │   ├── useAuth.ts                      # Context hook
 │   │   │   │   ├── useQuotePermissions.ts
 │   │   │   │   ├── useTicketPermissions.ts
 │   │   │   │   └── useUserPermissions.ts
-│   │   │   ├── quotes/
+│   │   │   ├── context/                            # All context hook
+│   │   │   │   ├── useAuth.ts
+│   │   │   │   ├── useSidebar.ts
+│   │   │   │   └── useTheme.ts
+│   │   │   ├── quotes/ 
 │   │   │   │   ├── useApproveQuote.ts
 │   │   │   │   ├── useCreateManualQuote.ts
 │   │   │   │   ├── useGenerateQuote.ts
@@ -85,18 +93,15 @@ smartquote/
 │   │   │   └── utils/                              # Generic helpers only; if it knows about e.g. tickets, it doesn't belong here
 │   │   ├── pages/                                  # Route level composition (no logic, only assemble features)
 │   │   │   ├── admin/
-│   │   │   │   ├── AdminDashboard.css
-│   │   │   │   └── AdminDashboard.tsx
 │   │   │   ├── customer/
-│   │   │   │   ├── CreateTicketPage.css
-│   │   │   │   ├── CreateTicketPage.tsx
 │   │   │   │   ├── CustomerLayout.tsx
-│   │   │   │   ├── CustomerPage.css
-│   │   │   │   ├── CustomerPage.tsx
-│   │   │   │   ├── CustomerSidebar.css
-│   │   │   │   └── CustomerSidebar.tsx
+│   │   │   │   ├── DashboardPage.tsx
+│   │   │   │   ├── NewTicketPage.tsx
+│   │   │   │   ├── SettingsPage.tsx
+│   │   │   │   ├── TicketDetailPage.tsx
+│   │   │   │   ├── TicketsPage.tsx
+│   │   │   │   └── useTicketFilters.ts
 │   │   │   └── login/
-│   │   │       ├── Icons.tsx
 │   │   │       ├── LoginPage.css
 │   │   │       └── LoginPage.tsx
 │   │   └── styles/                                 # Global styling and design tokens only; no component-specific styling
